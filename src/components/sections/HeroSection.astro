@@ -1,5 +1,6 @@
 ---
 // Hero — warm, editorial, confident
+// Animation handled by Layout.astro script (survives View Transitions)
 ---
 
 <section class="relative min-h-[90dvh] flex items-center overflow-hidden px-6 pt-32 pb-20 md:pt-0 md:pb-0" aria-label="Accueil">
@@ -7,22 +8,22 @@
   <div class="absolute top-[-20%] right-[-10%] w-[50vw] h-[50vw] -z-10 rounded-full bg-blue/[0.04] blur-[100px]" aria-hidden="true"></div>
 
   <div class="mx-auto max-w-6xl w-full">
-    <div class="flex items-center gap-3 mb-6 hero-eyebrow">
+    <div class="flex items-center gap-3 mb-6 hero-eyebrow hero-animated">
       <span class="h-px w-8 bg-gold" aria-hidden="true"></span>
       <span class="text-xs font-medium uppercase tracking-[0.2em] text-gold-text">Cambo-les-Bains · Pays Basque</span>
     </div>
 
     <h1 class="font-display font-extrabold text-ink leading-[1.05] tracking-tight mb-6" style="font-size: clamp(2.75rem, 6.5vw, 5rem);">
-      <span class="block overflow-hidden"><span class="hero-line block">Votre histoire</span></span>
-      <span class="block overflow-hidden"><span class="hero-line block">mérite d'être</span></span>
-      <span class="block overflow-hidden"><span class="hero-line block text-blue">racontée<span class="inline-block w-2.5 h-2.5 rounded-full bg-gold ml-1 align-middle relative -top-1" aria-hidden="true"></span></span></span>
+      <span class="block overflow-hidden"><span class="hero-line hero-animated block">Votre histoire</span></span>
+      <span class="block overflow-hidden"><span class="hero-line hero-animated block">mérite d'être</span></span>
+      <span class="block overflow-hidden"><span class="hero-line hero-animated block text-blue">racontée<span class="inline-block w-2.5 h-2.5 rounded-full bg-gold ml-1 align-middle relative -top-1" aria-hidden="true"></span></span></span>
     </h1>
 
-    <p class="text-ink-muted text-lg md:text-xl leading-relaxed max-w-lg mb-8 hero-sub">
+    <p class="text-ink-muted text-lg md:text-xl leading-relaxed max-w-lg mb-8 hero-sub hero-animated">
       Je vous accompagne dans vos projets de communication pour raconter votre histoire et atteindre vos objectifs.
     </p>
 
-    <div class="flex items-center gap-5 flex-wrap hero-actions">
+    <div class="flex items-center gap-5 flex-wrap hero-actions hero-animated">
       <a href="/contact" class="inline-flex items-center gap-3 px-7 py-3.5 bg-blue text-white rounded-full font-medium transition-all duration-300 hover:bg-blue-dark hover:shadow-lg hover:shadow-blue/20 hover:-translate-y-0.5 focus-visible:outline-offset-4">
         Parlons de votre projet
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
@@ -33,45 +34,3 @@
     </div>
   </div>
 </section>
-
-<style>
-  /* Hide hero elements before GSAP animates them — prevents FOUC */
-  .hero-eyebrow, .hero-sub, .hero-actions { opacity: 0; }
-  .hero-line { transform: translateY(110%); }
-</style>
-
-<script>
-  import { gsap } from 'gsap';
-
-  function animateHero() {
-    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-    tl.to('.hero-eyebrow', { opacity: 1, x: 0, duration: 0.8 }, 0.2);
-    tl.to('.hero-line', { yPercent: 0, duration: 1.1, stagger: 0.1 }, 0.3);
-    tl.to('.hero-sub', { opacity: 1, y: 0, duration: 0.8 }, 0.9);
-    tl.to('.hero-actions', { opacity: 1, y: 0, duration: 0.8 }, 1.1);
-  }
-
-  // Run after loader finishes (first visit) or after page swap (navigation)
-  if (document.getElementById('page-loader')?.style.display === 'none') {
-    animateHero();
-  } else {
-    // Wait for loader to finish
-    const observer = new MutationObserver(() => {
-      const loader = document.getElementById('page-loader');
-      if (loader && (loader.style.display === 'none' || loader.style.opacity === '0')) {
-        animateHero();
-        observer.disconnect();
-      }
-    });
-    const loader = document.getElementById('page-loader');
-    if (loader) {
-      observer.observe(loader, { attributes: true, attributeFilter: ['style'] });
-    } else {
-      animateHero();
-    }
-  }
-
-  document.addEventListener('astro:page-load', () => {
-    if (document.querySelector('.hero-line')) animateHero();
-  });
-</script>

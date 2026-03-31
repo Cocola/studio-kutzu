@@ -61,7 +61,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <!-- ── Page loader (first visit only) ── -->
     <div id="page-loader" class="fixed inset-0 z-[9999] flex items-center justify-center" style="background-color: #273CC6;">
       <div class="flex flex-col items-center gap-4">
-        <img src="/logo.svg" alt="" class="w-16 h-16 loader-logo" style="filter: brightness(0) invert(1);" />
+        <img src="/logo-white.svg" alt="" class="w-16 h-16"  />
         <div class="w-32 h-0.5 rounded-full overflow-hidden" style="background-color: rgba(255,255,255,0.2);">
           <div id="loader-bar" class="h-full rounded-full" style="background-color: #C98B27; width: 0%; transition: width 0.3s ease;"></div>
         </div>
@@ -70,7 +70,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
     <!-- ── Page transition overlay ── -->
     <div id="transition-overlay" class="fixed inset-0 z-[9998] pointer-events-none flex items-center justify-center" style="background-color: #273CC6; opacity: 0;">
-      <img src="/logo.svg" alt="" class="w-12 h-12" style="filter: brightness(0) invert(1); opacity: 0;" id="transition-logo" />
+      <img src="/logo-white.svg" alt="" class="w-12 h-12" style="filter: brightness(0) invert(1); opacity: 0;" id="transition-logo" />
     </div>
 
     <div class="page-content">
@@ -101,20 +101,26 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         gsap.ticker.lagSmoothing(0);
       }
 
-      // ── Initial page loader ──
+      // ── Initial page loader (minimum 2s) ──
       function runLoader() {
         const loader = document.getElementById('page-loader');
         const bar = document.getElementById('loader-bar');
         const content = document.querySelector('.page-content');
         if (!loader || !bar || !content) return;
 
+        const MIN_DURATION = 2000;
+        const startTime = Date.now();
         let progress = 0;
+
         const interval = setInterval(() => {
-          progress += Math.random() * 30 + 10;
-          if (progress > 100) progress = 100;
+          const elapsed = Date.now() - startTime;
+          // Progress follows elapsed time, reaches 90% quickly then slows
+          progress = Math.min(90, (elapsed / MIN_DURATION) * 100);
           bar.style.width = progress + '%';
-          if (progress >= 100) {
+
+          if (elapsed >= MIN_DURATION) {
             clearInterval(interval);
+            bar.style.width = '100%';
             setTimeout(() => {
               gsap.to(loader, {
                 opacity: 0,
@@ -123,11 +129,12 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
                 onComplete: () => {
                   loader.style.display = 'none';
                   content.classList.add('loaded');
+                  document.dispatchEvent(new Event('loader-done'));
                 },
               });
-            }, 200);
+            }, 300);
           }
-        }, 150);
+        }, 50);
       }
 
       // ── Page transition (on navigation) ──
@@ -162,10 +169,35 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         });
       }
 
+      // ── Hero animation ──
+      function animateHero() {
+        const heroElements = document.querySelectorAll('.hero-animated');
+        if (heroElements.length === 0) return;
+
+        // Make visible
+        heroElements.forEach((el) => {
+          (el as HTMLElement).style.visibility = 'visible';
+        });
+
+        // Kill any previous GSAP on these elements
+        gsap.killTweensOf('.hero-eyebrow, .hero-line, .hero-sub, .hero-actions');
+
+        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+        tl.from('.hero-eyebrow', { opacity: 0, x: -20, duration: 0.8 }, 0);
+        tl.from('.hero-line', { yPercent: 110, duration: 1.1, stagger: 0.1 }, 0.1);
+        tl.from('.hero-sub', { opacity: 0, y: 20, duration: 0.8 }, 0.7);
+        tl.from('.hero-actions', { opacity: 0, y: 20, duration: 0.8 }, 0.9);
+      }
+
       // ── Lifecycle ──
-      // First load
+      let isFirstLoad = true;
+
+      // First load: run loader, then hero
       runLoader();
       initLenis();
+      document.addEventListener('loader-done', () => {
+        animateHero();
+      }, { once: true });
 
       // Before navigation (transition out)
       document.addEventListener('astro:before-preparation', () => {
@@ -178,9 +210,14 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         initLenis();
       });
 
-      // After transition completes
+      // After transition completes (every navigation including first)
       document.addEventListener('astro:page-load', () => {
-        // Skip loader on subsequent navigations
+        if (isFirstLoad) {
+          isFirstLoad = false;
+          return; // First load handled by loader-done
+        }
+
+        // Subsequent navigations
         const loader = document.getElementById('page-loader');
         if (loader) loader.style.display = 'none';
 
@@ -188,6 +225,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         content?.classList.add('loaded');
 
         playTransitionIn();
+
+        // Animate hero if we landed on homepage
+        setTimeout(() => animateHero(), 400); // Wait for transition overlay to clear
       });
     </script>
   </body>

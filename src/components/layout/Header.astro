@@ -51,19 +51,22 @@ const currentPath = Astro.url.pathname;
 
   <!-- Mobile menu -->
   <div
-    class="md:hidden fixed inset-0 z-40 flex flex-col items-center justify-center gap-6"
+    class="md:hidden fixed inset-0 z-40 flex flex-col items-center justify-center gap-8"
     id="mobile-menu"
-    style="background-color: rgba(255, 251, 249, 0.97); backdrop-filter: blur(24px); opacity: 0; pointer-events: none; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);"
+    style="background-color: #273CC6; opacity: 0; pointer-events: none; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);"
   >
-    <!-- Close button inside menu -->
+    <!-- Logo white -->
+    <img src="/logo-white.svg" alt="" class="absolute top-6 left-6 w-10 h-10" />
+
+    <!-- Close button -->
     <button class="absolute top-6 right-6 w-10 h-10 flex items-center justify-center" id="mobile-menu-close" aria-label="Fermer le menu">
-      <svg class="w-6 h-6 text-ink" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+      <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
 
     {navItems.map((item, i) => (
       <a
         href={item.href}
-        class="text-2xl font-bold text-ink hover:text-blue transition-colors font-display mobile-menu-link"
+        class="text-2xl font-bold text-white/90 hover:text-white transition-colors font-display mobile-menu-link"
         style={`opacity: 0; transform: translateY(20px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.06}s;`}
       >
         {item.label}
@@ -71,7 +74,7 @@ const currentPath = Astro.url.pathname;
     ))}
     <a
       href="/contact"
-      class="mt-4 px-8 py-3 rounded-full bg-blue text-white font-medium mobile-menu-link"
+      class="mt-4 px-8 py-3 rounded-full bg-white text-blue font-bold font-display mobile-menu-link"
       style={`opacity: 0; transform: translateY(20px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${navItems.length * 0.06}s;`}
     >
       Parlons-en
