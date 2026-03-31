@@ -21,7 +21,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 <html lang="fr" class="lenis">
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
     <meta name="generator" content={Astro.generator} />
 
     <title>{title}</title>
@@ -50,13 +50,36 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,700,800&f[]=satoshi@400,500,700&display=swap"
       rel="stylesheet"
     />
+
+    <!-- Prevent FOUC: hide body until loader dismisses -->
+    <style is:inline>
+      .page-content { opacity: 0; }
+      .page-content.loaded { opacity: 1; }
+    </style>
   </head>
   <body class="overflow-x-hidden">
-    <Header />
-    <main>
-      <slot />
-    </main>
-    <Footer />
+    <!-- ── Page loader (first visit only) ── -->
+    <div id="page-loader" class="fixed inset-0 z-[9999] flex items-center justify-center" style="background-color: #273CC6;">
+      <div class="flex flex-col items-center gap-4">
+        <img src="/logo.svg" alt="" class="w-16 h-16 loader-logo" style="filter: brightness(0) invert(1);" />
+        <div class="w-32 h-0.5 rounded-full overflow-hidden" style="background-color: rgba(255,255,255,0.2);">
+          <div id="loader-bar" class="h-full rounded-full" style="background-color: #C98B27; width: 0%; transition: width 0.3s ease;"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Page transition overlay ── -->
+    <div id="transition-overlay" class="fixed inset-0 z-[9998] pointer-events-none flex items-center justify-center" style="background-color: #273CC6; opacity: 0;">
+      <img src="/logo.svg" alt="" class="w-12 h-12" style="filter: brightness(0) invert(1); opacity: 0;" id="transition-logo" />
+    </div>
+
+    <div class="page-content">
+      <Header />
+      <main>
+        <slot />
+      </main>
+      <Footer />
+    </div>
 
     <script>
       import { gsap } from 'gsap';
@@ -67,9 +90,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
       let currentLenis: InstanceType<typeof Lenis> | null = null;
 
-      function initPage() {
+      function initLenis() {
         if (currentLenis) currentLenis.destroy();
-
         currentLenis = new Lenis({
           duration: 1.2,
           easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
@@ -77,12 +99,96 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         currentLenis.on('scroll', ScrollTrigger.update);
         gsap.ticker.add((time) => currentLenis?.raf(time * 1000));
         gsap.ticker.lagSmoothing(0);
-
-        window.scrollTo(0, 0);
       }
 
-      initPage();
-      document.addEventListener('astro:after-swap', initPage);
+      // ── Initial page loader ──
+      function runLoader() {
+        const loader = document.getElementById('page-loader');
+        const bar = document.getElementById('loader-bar');
+        const content = document.querySelector('.page-content');
+        if (!loader || !bar || !content) return;
+
+        let progress = 0;
+        const interval = setInterval(() => {
+          progress += Math.random() * 30 + 10;
+          if (progress > 100) progress = 100;
+          bar.style.width = progress + '%';
+          if (progress >= 100) {
+            clearInterval(interval);
+            setTimeout(() => {
+              gsap.to(loader, {
+                opacity: 0,
+                duration: 0.5,
+                ease: 'power2.inOut',
+                onComplete: () => {
+                  loader.style.display = 'none';
+                  content.classList.add('loaded');
+                },
+              });
+            }, 200);
+          }
+        }, 150);
+      }
+
+      // ── Page transition (on navigation) ──
+      function playTransitionOut() {
+        const overlay = document.getElementById('transition-overlay');
+        const logo = document.getElementById('transition-logo');
+        if (!overlay || !logo) return;
+
+        overlay.style.pointerEvents = 'all';
+        const tl = gsap.timeline();
+        tl.to(overlay, { opacity: 1, duration: 0.35, ease: 'power2.in' });
+        tl.to(logo, { opacity: 1, scale: 1, duration: 0.2, ease: 'power2.out' }, '-=0.1');
+      }
+
+      function playTransitionIn() {
+        const overlay = document.getElementById('transition-overlay');
+        const logo = document.getElementById('transition-logo');
+        const content = document.querySelector('.page-content');
+        if (!overlay || !logo) return;
+
+        content?.classList.add('loaded');
+
+        const tl = gsap.timeline();
+        tl.to(logo, { opacity: 0, duration: 0.15, ease: 'power2.in' });
+        tl.to(overlay, {
+          opacity: 0,
+          duration: 0.4,
+          ease: 'power2.out',
+          onComplete: () => {
+            overlay.style.pointerEvents = 'none';
+          },
+        });
+      }
+
+      // ── Lifecycle ──
+      // First load
+      runLoader();
+      initLenis();
+
+      // Before navigation (transition out)
+      document.addEventListener('astro:before-preparation', () => {
+        playTransitionOut();
+      });
+
+      // After swap (new page content is in DOM)
+      document.addEventListener('astro:after-swap', () => {
+        window.scrollTo(0, 0);
+        initLenis();
+      });
+
+      // After transition completes
+      document.addEventListener('astro:page-load', () => {
+        // Skip loader on subsequent navigations
+        const loader = document.getElementById('page-loader');
+        if (loader) loader.style.display = 'none';
+
+        const content = document.querySelector('.page-content');
+        content?.classList.add('loaded');
+
+        playTransitionIn();
+      });
     </script>
   </body>
 </html>

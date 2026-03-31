@@ -41,54 +41,118 @@ const currentPath = Astro.url.pathname;
       Parlons-en
     </a>
 
-    <button class="md:hidden flex flex-col gap-1.5 p-2" id="mobile-menu-btn" aria-label="Menu" aria-expanded="false">
-      <span class="w-6 h-0.5 bg-ink transition-all duration-300 origin-center" id="bar1"></span>
-      <span class="w-6 h-0.5 bg-ink transition-all duration-300" id="bar2"></span>
-      <span class="w-4 h-0.5 bg-ink transition-all duration-300 origin-center" id="bar3"></span>
+    <!-- Hamburger / Close button -->
+    <button class="md:hidden relative w-10 h-10 flex items-center justify-center" id="mobile-menu-btn" aria-label="Ouvrir le menu" aria-expanded="false">
+      <span class="w-6 h-0.5 bg-ink absolute transition-all duration-300 ease-out" id="bar1" style="transform: translateY(-4px);"></span>
+      <span class="w-6 h-0.5 bg-ink absolute transition-all duration-300 ease-out" id="bar2"></span>
+      <span class="w-4 h-0.5 bg-ink absolute transition-all duration-300 ease-out ml-auto" id="bar3" style="transform: translateY(4px);"></span>
     </button>
   </nav>
 
-  <div class="md:hidden fixed inset-0 bg-bg/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center gap-8 opacity-0 pointer-events-none transition-opacity duration-500" id="mobile-menu">
-    {navItems.map((item) => (
-      <a href={item.href} class="text-2xl font-bold text-ink hover:text-blue transition-colors font-display">
+  <!-- Mobile menu -->
+  <div
+    class="md:hidden fixed inset-0 z-40 flex flex-col items-center justify-center gap-6"
+    id="mobile-menu"
+    style="background-color: rgba(255, 251, 249, 0.97); backdrop-filter: blur(24px); opacity: 0; pointer-events: none; transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1);"
+  >
+    <!-- Close button inside menu -->
+    <button class="absolute top-6 right-6 w-10 h-10 flex items-center justify-center" id="mobile-menu-close" aria-label="Fermer le menu">
+      <svg class="w-6 h-6 text-ink" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
+    </button>
+
+    {navItems.map((item, i) => (
+      <a
+        href={item.href}
+        class="text-2xl font-bold text-ink hover:text-blue transition-colors font-display mobile-menu-link"
+        style={`opacity: 0; transform: translateY(20px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.06}s;`}
+      >
         {item.label}
       </a>
     ))}
-    <a href="/contact" class="mt-4 px-8 py-3 rounded-full bg-blue text-white font-medium">
+    <a
+      href="/contact"
+      class="mt-4 px-8 py-3 rounded-full bg-blue text-white font-medium mobile-menu-link"
+      style={`opacity: 0; transform: translateY(20px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${navItems.length * 0.06}s;`}
+    >
       Parlons-en
     </a>
   </div>
 </header>
 
 <script>
-  const header = document.getElementById('site-header');
-  window.addEventListener('scroll', () => {
-    if (!header) return;
-    if (window.scrollY > 60) {
-      header.style.backgroundColor = 'rgba(255, 251, 249, 0.9)';
-      header.style.backdropFilter = 'blur(16px)';
-      header.style.borderBottom = '1px solid var(--color-border)';
-    } else {
-      header.style.backgroundColor = 'transparent';
-      header.style.backdropFilter = 'none';
-      header.style.borderBottom = 'none';
+  function initHeader() {
+    const header = document.getElementById('site-header');
+    const btn = document.getElementById('mobile-menu-btn');
+    const closeBtn = document.getElementById('mobile-menu-close');
+    const menu = document.getElementById('mobile-menu');
+    const bar1 = document.getElementById('bar1');
+    const bar2 = document.getElementById('bar2');
+    const bar3 = document.getElementById('bar3');
+    const links = document.querySelectorAll('.mobile-menu-link');
+    let isOpen = false;
+
+    // Scroll header background
+    function onScroll() {
+      if (!header) return;
+      if (window.scrollY > 60) {
+        header.style.backgroundColor = 'rgba(255, 251, 249, 0.9)';
+        header.style.backdropFilter = 'blur(16px)';
+        header.style.borderBottom = '1px solid var(--color-border)';
+      } else {
+        header.style.backgroundColor = 'transparent';
+        header.style.backdropFilter = 'none';
+        header.style.borderBottom = 'none';
+      }
     }
-  });
+    window.addEventListener('scroll', onScroll);
+    onScroll();
 
-  const btn = document.getElementById('mobile-menu-btn');
-  const menu = document.getElementById('mobile-menu');
-  const bar1 = document.getElementById('bar1');
-  const bar2 = document.getElementById('bar2');
-  const bar3 = document.getElementById('bar3');
-  let isOpen = false;
+    function openMenu() {
+      isOpen = true;
+      if (!menu) return;
+      menu.style.opacity = '1';
+      menu.style.pointerEvents = 'all';
+      // Animate links in
+      links.forEach((link) => {
+        (link as HTMLElement).style.opacity = '1';
+        (link as HTMLElement).style.transform = 'translateY(0)';
+      });
+      // Morph hamburger to X
+      if (bar1) { bar1.style.transform = 'rotate(45deg)'; bar1.style.width = '24px'; }
+      if (bar2) bar2.style.opacity = '0';
+      if (bar3) { bar3.style.transform = 'rotate(-45deg)'; bar3.style.width = '24px'; }
+      btn?.setAttribute('aria-expanded', 'true');
+      btn?.setAttribute('aria-label', 'Fermer le menu');
+      document.body.style.overflow = 'hidden';
+    }
 
-  btn?.addEventListener('click', () => {
-    isOpen = !isOpen;
-    menu?.classList.toggle('opacity-0', !isOpen);
-    menu?.classList.toggle('pointer-events-none', !isOpen);
-    if (bar1) bar1.style.transform = isOpen ? 'rotate(45deg) translateY(4px)' : '';
-    if (bar2) bar2.style.opacity = isOpen ? '0' : '1';
-    if (bar3) bar3.style.transform = isOpen ? 'rotate(-45deg) translateY(-4px)' : '';
-    document.body.style.overflow = isOpen ? 'hidden' : '';
-  });
+    function closeMenu() {
+      isOpen = false;
+      if (!menu) return;
+      // Reset links
+      links.forEach((link) => {
+        (link as HTMLElement).style.opacity = '0';
+        (link as HTMLElement).style.transform = 'translateY(20px)';
+      });
+      menu.style.opacity = '0';
+      menu.style.pointerEvents = 'none';
+      // Restore hamburger
+      if (bar1) { bar1.style.transform = 'translateY(-4px)'; bar1.style.width = '24px'; }
+      if (bar2) bar2.style.opacity = '1';
+      if (bar3) { bar3.style.transform = 'translateY(4px)'; bar3.style.width = '16px'; }
+      btn?.setAttribute('aria-expanded', 'false');
+      btn?.setAttribute('aria-label', 'Ouvrir le menu');
+      document.body.style.overflow = '';
+    }
+
+    btn?.addEventListener('click', () => isOpen ? closeMenu() : openMenu());
+    closeBtn?.addEventListener('click', closeMenu);
+
+    // Close on link click
+    links.forEach((link) => link.addEventListener('click', closeMenu));
+  }
+
+  // Run on first load and after View Transition swaps
+  initHeader();
+  document.addEventListener('astro:after-swap', initHeader);
 </script>

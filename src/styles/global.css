@@ -49,6 +49,11 @@ h1, h2, h3, h4, h5, h6 {
   color: white;
 }
 
+/* ── Inputs: prevent iOS zoom (font-size must be >= 16px) ── */
+input, select, textarea {
+  font-size: 16px;
+}
+
 /* ── Focus ── */
 :focus-visible {
   outline: 2px solid var(--color-blue);

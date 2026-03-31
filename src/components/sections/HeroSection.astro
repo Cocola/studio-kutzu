@@ -34,11 +34,44 @@
   </div>
 </section>
 
+<style>
+  /* Hide hero elements before GSAP animates them — prevents FOUC */
+  .hero-eyebrow, .hero-sub, .hero-actions { opacity: 0; }
+  .hero-line { transform: translateY(110%); }
+</style>
+
 <script>
   import { gsap } from 'gsap';
-  const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-  tl.from('.hero-eyebrow', { opacity: 0, x: -20, duration: 0.8 }, 0.2);
-  tl.from('.hero-line', { yPercent: 110, duration: 1.1, stagger: 0.1 }, 0.3);
-  tl.from('.hero-sub', { opacity: 0, y: 20, duration: 0.8 }, 0.9);
-  tl.from('.hero-actions', { opacity: 0, y: 20, duration: 0.8 }, 1.1);
+
+  function animateHero() {
+    const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+    tl.to('.hero-eyebrow', { opacity: 1, x: 0, duration: 0.8 }, 0.2);
+    tl.to('.hero-line', { yPercent: 0, duration: 1.1, stagger: 0.1 }, 0.3);
+    tl.to('.hero-sub', { opacity: 1, y: 0, duration: 0.8 }, 0.9);
+    tl.to('.hero-actions', { opacity: 1, y: 0, duration: 0.8 }, 1.1);
+  }
+
+  // Run after loader finishes (first visit) or after page swap (navigation)
+  if (document.getElementById('page-loader')?.style.display === 'none') {
+    animateHero();
+  } else {
+    // Wait for loader to finish
+    const observer = new MutationObserver(() => {
+      const loader = document.getElementById('page-loader');
+      if (loader && (loader.style.display === 'none' || loader.style.opacity === '0')) {
+        animateHero();
+        observer.disconnect();
+      }
+    });
+    const loader = document.getElementById('page-loader');
+    if (loader) {
+      observer.observe(loader, { attributes: true, attributeFilter: ['style'] });
+    } else {
+      animateHero();
+    }
+  }
+
+  document.addEventListener('astro:page-load', () => {
+    if (document.querySelector('.hero-line')) animateHero();
+  });
 </script>
