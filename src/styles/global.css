@@ -1,0 +1,70 @@
+@import "tailwindcss";
+
+@theme {
+  /* ── Brand tokens from logo.svg ── */
+  --color-blue: #273CC6;
+  --color-blue-light: #4D63E0;
+  --color-blue-dark: #1B2A8F;
+  --color-pink: #FFE7E9;
+  --color-pink-deep: #F5C6CB;
+  --color-gold: #C98B27;
+  --color-gold-light: #E5AD4A;
+
+  /* ── Surfaces ── */
+  --color-bg: #FFFBF9;
+  --color-surface: #FFFFFF;
+  --color-surface-alt: #FFF0F1;
+  --color-border: #F0E0E2;
+  --color-border-strong: #D9C4C7;
+
+  /* ── Text ── */
+  --color-ink: #1A1A2E;
+  --color-ink-muted: #6B6580;
+  --color-ink-faint: #9B93A8;
+  --color-gold-text: #8A6914;
+
+  /* ── Typography ── */
+  --font-display: 'Cabinet Grotesk', system-ui, sans-serif;
+  --font-body: 'Satoshi', system-ui, sans-serif;
+}
+
+/* ── Base ── */
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-bg);
+  color: var(--color-ink);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-display);
+}
+
+::selection {
+  background-color: var(--color-blue);
+  color: white;
+}
+
+/* ── Focus ── */
+:focus-visible {
+  outline: 2px solid var(--color-blue);
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* ── Lenis ── */
+html.lenis, html.lenis body { height: auto; }
+.lenis.lenis-smooth { scroll-behavior: auto !important; }

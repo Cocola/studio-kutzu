@@ -1,0 +1,94 @@
+---
+const navItems = [
+  { label: 'Accueil', href: '/' },
+  { label: 'Services', href: '/services' },
+  { label: 'Réalisations', href: '/realisations' },
+  { label: 'À propos', href: '/a-propos' },
+  { label: 'Contact', href: '/contact' },
+];
+const currentPath = Astro.url.pathname;
+---
+
+<header class="fixed top-0 inset-x-0 z-50 transition-all duration-500" id="site-header">
+  <nav class="mx-auto max-w-7xl px-6 py-5 flex items-center justify-between">
+    <a href="/" class="flex items-center gap-3 group" aria-label="Studio Kutzu — Accueil">
+      <img src="/logo.svg" alt="" class="h-10 w-10 transition-transform duration-500 group-hover:scale-105" transition:name="logo" />
+      <span class="text-lg font-bold tracking-tight text-ink hidden sm:block font-display">
+        Studio Kutzu
+      </span>
+    </a>
+
+    <ul class="hidden md:flex items-center gap-8">
+      {navItems.map((item) => (
+        <li>
+          <a
+            href={item.href}
+            class:list={[
+              'text-sm font-medium transition-colors duration-300 hover:text-blue relative',
+              currentPath === item.href ? 'text-blue' : 'text-ink-muted',
+            ]}
+          >
+            {item.label}
+            {currentPath === item.href && (
+              <span class="absolute -bottom-1 inset-x-0 h-0.5 bg-blue rounded-full" />
+            )}
+          </a>
+        </li>
+      ))}
+    </ul>
+
+    <a href="/contact" class="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue text-white text-sm font-medium transition-all duration-300 hover:bg-blue-dark hover:scale-105">
+      Parlons-en
+    </a>
+
+    <button class="md:hidden flex flex-col gap-1.5 p-2" id="mobile-menu-btn" aria-label="Menu" aria-expanded="false">
+      <span class="w-6 h-0.5 bg-ink transition-all duration-300 origin-center" id="bar1"></span>
+      <span class="w-6 h-0.5 bg-ink transition-all duration-300" id="bar2"></span>
+      <span class="w-4 h-0.5 bg-ink transition-all duration-300 origin-center" id="bar3"></span>
+    </button>
+  </nav>
+
+  <div class="md:hidden fixed inset-0 bg-bg/95 backdrop-blur-xl z-40 flex flex-col items-center justify-center gap-8 opacity-0 pointer-events-none transition-opacity duration-500" id="mobile-menu">
+    {navItems.map((item) => (
+      <a href={item.href} class="text-2xl font-bold text-ink hover:text-blue transition-colors font-display">
+        {item.label}
+      </a>
+    ))}
+    <a href="/contact" class="mt-4 px-8 py-3 rounded-full bg-blue text-white font-medium">
+      Parlons-en
+    </a>
+  </div>
+</header>
+
+<script>
+  const header = document.getElementById('site-header');
+  window.addEventListener('scroll', () => {
+    if (!header) return;
+    if (window.scrollY > 60) {
+      header.style.backgroundColor = 'rgba(255, 251, 249, 0.9)';
+      header.style.backdropFilter = 'blur(16px)';
+      header.style.borderBottom = '1px solid var(--color-border)';
+    } else {
+      header.style.backgroundColor = 'transparent';
+      header.style.backdropFilter = 'none';
+      header.style.borderBottom = 'none';
+    }
+  });
+
+  const btn = document.getElementById('mobile-menu-btn');
+  const menu = document.getElementById('mobile-menu');
+  const bar1 = document.getElementById('bar1');
+  const bar2 = document.getElementById('bar2');
+  const bar3 = document.getElementById('bar3');
+  let isOpen = false;
+
+  btn?.addEventListener('click', () => {
+    isOpen = !isOpen;
+    menu?.classList.toggle('opacity-0', !isOpen);
+    menu?.classList.toggle('pointer-events-none', !isOpen);
+    if (bar1) bar1.style.transform = isOpen ? 'rotate(45deg) translateY(4px)' : '';
+    if (bar2) bar2.style.opacity = isOpen ? '0' : '1';
+    if (bar3) bar3.style.transform = isOpen ? 'rotate(-45deg) translateY(-4px)' : '';
+    document.body.style.overflow = isOpen ? 'hidden' : '';
+  });
+</script>

@@ -1,0 +1,144 @@
+---
+import Layout from '../layouts/Layout.astro';
+import { siteConfig } from '../data/site';
+---
+
+<Layout
+  title="Contact | Studio Kutzu — Communication Digitale au Pays Basque"
+  description="Contactez Studio Kutzu pour discuter de votre projet de communication digitale. Cambo-les-Bains, Pays Basque."
+>
+  <section class="pt-32 pb-32 px-6">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-16">
+      <!-- Left: info -->
+      <div>
+        <span class="text-xs font-medium uppercase tracking-[0.2em] text-ink-faint mb-4 block">Contact</span>
+        <h1 class="font-display text-4xl md:text-5xl font-extrabold tracking-tight text-ink leading-tight mb-6">
+          Parlons de<br/>votre <span class="text-blue">projet</span>
+        </h1>
+        <p class="text-ink-muted text-lg leading-relaxed mb-10">
+          Un premier échange sans engagement pour comprendre vos besoins et voir comment je peux vous accompagner.
+        </p>
+
+        <div class="flex flex-col gap-6">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-pink flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-ink">Email</p>
+              <a href="mailto:contact@studiokutzu.com" class="text-sm text-blue hover:underline">contact@studiokutzu.com</a>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-pink flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-ink">Localisation</p>
+              <p class="text-sm text-ink-muted">Cambo-les-Bains, 64250<br/>Pays Basque, France</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-pink flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-ink">Réseaux sociaux</p>
+              <div class="flex gap-3 mt-1">
+                <a href={siteConfig.instagram} target="_blank" rel="noopener noreferrer" class="text-sm text-blue hover:underline">Instagram</a>
+                <a href={siteConfig.linkedin} target="_blank" rel="noopener noreferrer" class="text-sm text-blue hover:underline">LinkedIn</a>
+                <a href={siteConfig.facebook} target="_blank" rel="noopener noreferrer" class="text-sm text-blue hover:underline">Facebook</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: form -->
+      <div class="bg-surface rounded-2xl border border-border p-8 md:p-10">
+        <h2 class="font-display text-xl font-bold text-ink mb-6">Envoyez-moi un message</h2>
+        <form class="flex flex-col gap-5" id="contact-form">
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label for="name" class="text-sm font-medium text-ink mb-1.5 block">Nom *</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                class="w-full px-4 py-3 rounded-xl bg-bg border border-border text-ink text-sm placeholder-ink-faint focus:outline-none focus:border-blue focus:ring-1 focus:ring-blue transition-colors"
+                placeholder="Votre nom"
+              />
+            </div>
+            <div>
+              <label for="email" class="text-sm font-medium text-ink mb-1.5 block">Email *</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                class="w-full px-4 py-3 rounded-xl bg-bg border border-border text-ink text-sm placeholder-ink-faint focus:outline-none focus:border-blue focus:ring-1 focus:ring-blue transition-colors"
+                placeholder="votre@email.com"
+              />
+            </div>
+          </div>
+          <div>
+            <label for="company" class="text-sm font-medium text-ink mb-1.5 block">Entreprise</label>
+            <input
+              type="text"
+              id="company"
+              name="company"
+              class="w-full px-4 py-3 rounded-xl bg-bg border border-border text-ink text-sm placeholder-ink-faint focus:outline-none focus:border-blue focus:ring-1 focus:ring-blue transition-colors"
+              placeholder="Nom de votre entreprise"
+            />
+          </div>
+          <div>
+            <label for="subject" class="text-sm font-medium text-ink mb-1.5 block">Sujet *</label>
+            <select
+              id="subject"
+              name="subject"
+              required
+              class="w-full px-4 py-3 rounded-xl bg-bg border border-border text-ink text-sm focus:outline-none focus:border-blue focus:ring-1 focus:ring-blue transition-colors"
+            >
+              <option value="">Choisir un sujet</option>
+              <option value="site-web">Création de site web</option>
+              <option value="identite-visuelle">Identité visuelle</option>
+              <option value="reseaux-sociaux">Réseaux sociaux</option>
+              <option value="strategie">Stratégie digitale</option>
+              <option value="autre">Autre</option>
+            </select>
+          </div>
+          <div>
+            <label for="message" class="text-sm font-medium text-ink mb-1.5 block">Message *</label>
+            <textarea
+              id="message"
+              name="message"
+              required
+              rows="5"
+              class="w-full px-4 py-3 rounded-xl bg-bg border border-border text-ink text-sm placeholder-ink-faint focus:outline-none focus:border-blue focus:ring-1 focus:ring-blue transition-colors resize-none"
+              placeholder="Décrivez votre projet, vos besoins, vos objectifs..."
+            ></textarea>
+          </div>
+          <button
+            type="submit"
+            class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-blue text-white rounded-full font-bold font-display transition-all duration-300 hover:bg-blue-dark hover:shadow-lg hover:shadow-blue/20 hover:-translate-y-0.5"
+          >
+            Envoyer
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </button>
+        </form>
+
+        <!-- Success state (hidden by default) -->
+        <div id="form-success" class="hidden text-center py-12">
+          <div class="w-16 h-16 rounded-full bg-pink flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <h3 class="font-display text-xl font-bold text-ink mb-2">Message envoyé !</h3>
+          <p class="text-sm text-ink-muted">Merci pour votre message. Je vous réponds dans les plus brefs délais.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</Layout>
