@@ -1,56 +1,158 @@
 # Studio Kutzu
 
-Site vitrine pour Studio Kutzu, studio de communication digitale au Pays Basque.
+Site vitrine pour **Studio Kutzu**, studio de communication digitale au Pays Basque, fondé par **Maider Gaicotchea**.
+
+## Quick Start
+
+```bash
+npm install        # installer les dépendances
+npm run dev        # serveur local sur :4321
+npm run build      # build statique dans dist/
+npx vercel --prod  # déployer en production
+```
 
 ## Tech Stack
 
-- **Framework**: Astro 5 (static, islands architecture)
-- **Styling**: Tailwind CSS v4 (`@theme` tokens in `src/styles/global.css`)
-- **Interactivity**: React (islands only, for forms/filters), GSAP + ScrollTrigger (scroll animations), Lenis (smooth scroll)
-- **Typography**: Cabinet Grotesk (display, via Fontshare) + Satoshi (body, via Fontshare)
-- **Language**: TypeScript strict
-- **Deploy target**: Vercel (static output)
+- **Framework** : Astro 5 (static, islands architecture)
+- **Styling** : Tailwind CSS v4 (tokens dans `src/styles/global.css`)
+- **Animations** : GSAP + Lenis (smooth scroll)
+- **Typography** : Cabinet Grotesk (display) + Satoshi (body) — fonts locales dans `public/fonts/`
+- **TypeScript** strict
+- **Deploy** : Vercel (static output, deploy auto via GitHub push)
 
-## Commands
+## Architecture du Projet
 
-- `npm run dev` — dev server on :4321
-- `npm run build` — static build to `dist/`
-- `npm run preview` — preview production build
+```
+src/
+├── data/site.ts              # Toutes les données : config, services, portfolio
+├── styles/global.css          # Tokens de couleurs, fonts, base styles
+├── layouts/Layout.astro       # Layout principal (meta, loader, transitions)
+├── components/
+│   ├── layout/
+│   │   ├── Header.astro       # Navigation + menu mobile
+│   │   └── Footer.astro       # Pied de page
+│   └── sections/
+│       ├── HeroSection.astro  # Hero animé de la homepage
+│       └── CtaSection.astro   # Bloc CTA réutilisable
+├── pages/
+│   ├── index.astro            # Homepage
+│   ├── a-propos.astro         # Page À propos
+│   ├── contact.astro          # Page Contact (formulaire)
+│   ├── services/
+│   │   ├── index.astro        # Liste des services
+│   │   └── [slug].astro       # Page par service (dynamique)
+│   └── realisations/
+│       ├── index.astro        # Grille des réalisations
+│       └── [slug].astro       # Page par projet (dynamique)
+public/
+├── portfolio/                 # Images des projets (mockups, captures)
+│   └── gallery/               # Images additionnelles pour les galeries
+├── fonts/                     # Fonts locales (woff2)
+├── logo.svg                   # Logo couleur
+├── logo-white.svg             # Logo blanc (loader, menu mobile)
+└── maider.jpg                 # Portrait de Maider
+```
 
-## Design Context
+## Comment Modifier le Contenu
 
-### Users
+### Ajouter un nouveau client/projet
 
-Local professionals and business owners in the Pays Basque region (Cambo-les-Bains, Bayonne, Biarritz, Anglet). They need digital communication services but often feel overwhelmed by it — communication feels "floue, superflue, ou hors de portée." They come to the site to understand what Maider offers, see proof of her work, and feel confident enough to reach out. Many are small teams or solo entrepreneurs.
+1. Ajouter une image dans `public/portfolio/` (format JPG, ~1280px de large)
+2. Ajouter les images de galerie dans `public/portfolio/gallery/` si besoin
+3. Ajouter l'entrée dans le tableau `portfolio` dans `src/data/site.ts` :
 
-### Brand Personality
+```typescript
+{
+  client: 'Nom du Client',
+  slug: 'nom-du-client',        // URL : /realisations/nom-du-client
+  description: 'Description du projet...',
+  services: ['Création site web', 'Identité visuelle'],
+  location: 'Cambo-les-Bains',
+  website: 'www.exemple.com',    // optionnel
+  instagram: 'https://...',      // optionnel
+  year: 2025,
+  featured: true,                // true = apparait sur la homepage
+  image: { desktop: '/portfolio/nom-desktop.jpg', mobile: '/portfolio/nom-desktop.jpg' },
+  gallery: ['/portfolio/gallery/nom-visuel1.jpg', '/portfolio/gallery/nom-visuel2.jpg'],  // optionnel
+},
+```
 
-**Chaleureuse, authentique, ancrée.** Studio Kutzu is not a cold agency — it's Maider, one person who holds your hand through communication projects. The voice is warm and personal ("je" not "nous"), rooted in the Basque territory (euskara, local references), and sincere without being casual. The gold accent (·) on the logo's K is a detail that signals craft and care.
+### Modifier un service
 
-### Emotional Goal
+Les services sont dans le tableau `services` dans `src/data/site.ts`. Chaque service a : nom, slug, description, features (liste), icone SVG, couleurs.
 
-**Confiance et réassurance.** A visitor should think: "Je suis entre de bonnes mains." The site must communicate competence through quality of execution, not through corporate jargon. Show the work, let the results speak, and make it easy to take the first step (contact).
+### Modifier les infos de contact
 
-### Aesthetic Direction
+Tout est dans `siteConfig` en haut de `src/data/site.ts` : email, téléphone, adresse, réseaux sociaux.
 
-- **Mode**: Light only. Warm, airy, feminine without being fragile.
-- **Palette**: Rose pâle `#FFE7E9` (warmth), bleu cobalt `#273CC6` (expertise/trust), or `#C98B27` (craft/premium detail). Background cream `#FFFBF9`. Text navy `#1A1A2E`.
-- **Tone**: Clean and editorial, not minimal-tech. Think a well-designed magazine spread, not a SaaS landing page.
-- **Anti-references**: Dark mode, neon gradients, glassmorphism-heavy, overly techy aesthetics, generic SaaS templates, card-grid monotony. Nothing that could look like it was made for a fintech startup.
-- **Motion**: Purposeful and gentle — scroll reveals, soft entrances. Not flashy or attention-seeking. Motion should feel like a page turning, not a fireworks show.
+### Modifier les textes des pages
 
-### Design Principles
+- **Homepage** : `src/pages/index.astro`
+- **À propos** : `src/pages/a-propos.astro`
+- **Contact** : `src/pages/contact.astro`
+- **Hero** : `src/components/sections/HeroSection.astro`
 
-1. **Warmth over wow.** Every design decision should feel inviting, not impressive. The site should feel like walking into a well-lit atelier, not a showroom.
-2. **Substance over decoration.** No visual element without purpose. If a gradient, texture, or animation doesn't reinforce trust or guide attention, remove it.
-3. **Territory matters.** The Basque identity is core — not as folklore decoration, but as genuine cultural grounding (bilingual content, local client references, place names).
-4. **Show, don't tell.** Portfolio work and client outcomes are more convincing than feature lists. Let the projects carry the narrative.
-5. **Accessibility is non-negotiable.** WCAG AA compliance: 4.5:1 contrast ratios, keyboard navigation, reduced motion support, semantic HTML, meaningful alt texts.
+## Design & Marque
 
-### Color Contrast Guide (WCAG AA)
+### Identité
 
-- `#1A1A2E` on `#FFFBF9` → ~15.8:1 ✅ (primary text)
-- `#6B6580` on `#FFFBF9` → ~5.4:1 ✅ (muted text)
-- `#273CC6` on `#FFFBF9` → ~5.9:1 ✅ (links/accents)
-- `#C98B27` on `#FFFBF9` → ~3.5:1 ⚠️ (decorative only, not for text — use `#9A6A1A` for accessible gold text)
-- `#FFFFFF` on `#273CC6` → ~7.1:1 ✅ (white on blue buttons)
+- **Fondatrice** : Maider Gaicotchea, 18 ans d'expérience en communication
+- **Localisation** : 8 chemin du Camp de César, 64250 Cambo-les-Bains
+- **Positionnement** : Communication digitale chaleureuse, authentique, ancrée au Pays Basque
+- **Voix** : "je" (pas "nous"), chaleureuse et professionnelle, bilingue français/euskara
+
+### Palette de Couleurs
+
+| Token | Hex | Usage |
+|-------|-----|-------|
+| `blue` | `#273CC6` | Accent principal, liens, boutons |
+| `pink` | `#FFE7E9` | Fonds doux, badges |
+| `gold` | `#C98B27` | Détails premium, accents secondaires |
+| `bg` | `#FFFBF9` | Fond de page |
+| `ink` | `#1A1A2E` | Texte principal |
+| `ink-muted` | `#6B6580` | Texte secondaire |
+| `ink-faint` | `#6B6378` | Métadonnées, dates |
+
+### Typographie
+
+- **Cabinet Grotesk** : titres (`font-display`), weights 400/500/700/800
+- **Satoshi** : corps de texte (`font-body`), weights 400/500/700
+- Fonts servies localement depuis `public/fonts/` (pas de CDN)
+
+### Principes de Design
+
+1. **Chaleur** : le site doit donner envie de contacter Maider, pas impressionner
+2. **Light mode uniquement** : pas de dark mode
+3. **Pas de** : gradients néon, glassmorphism, esthétique SaaS/tech
+4. **Motion douce** : animations subtiles, scroll reveals, pas de flashy
+5. **Accessibilité** : WCAG AA, contraste 4.5:1 minimum, navigation clavier
+
+### Contraste WCAG AA
+
+- `ink` sur `bg` → ~15.8:1
+- `ink-muted` sur `bg` → ~5.4:1
+- `blue` sur `bg` → ~5.9:1
+- `white` sur `blue` → ~7.1:1
+- `gold` → décoratif uniquement, pas pour du texte
+
+## Services (6)
+
+1. Gestion des réseaux sociaux (`social-media`)
+2. Sites Web & E-commerce (`sites-web`)
+3. Identité visuelle & Print (`identite-visuelle`)
+4. Marketing digital (`marketing-digital`)
+5. Éditions imprimées (`editions-imprimees`)
+6. Communication événementielle (`evenementiel`)
+
+## Déploiement
+
+Le site est déployé sur **Vercel** en mode statique. Chaque push sur la branche principale déclenche un redéploiement automatique.
+
+Pour déployer manuellement : `npx vercel --prod`
+
+## Notes Importantes
+
+- Le formulaire de contact pointe vers Formspree — il faut un vrai form ID pour que ça fonctionne (actuellement placeholder)
+- Le `robots.txt` est configuré en `Disallow: /` (pas d'indexation) — à changer quand le site sera prêt pour le public
+- Les URL canoniques et OG pointent vers `studiokutzu.com` — à vérifier quand le domaine sera connecté
+- Le site n'est PAS sur GitHub pour l'instant — il faut créer le repo et push

@@ -26,7 +26,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
     <title>{title}</title>
     <meta name="description" content={description} />
-    <meta name="robots" content="noindex, nofollow" />
+    <meta name="robots" content="index, follow" />
     <link rel="canonical" href={canonicalURL} />
 
     <meta property="og:type" content="website" />
@@ -39,17 +39,16 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={description} />
+    <meta property="og:image" content="https://studiokutzu.com/og-image.jpg" />
+    <meta name="twitter:image" content="https://studiokutzu.com/og-image.jpg" />
 
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <link rel="manifest" href="/manifest.json" />
     <ClientRouter />
     <meta name="theme-color" content="#273CC6" />
 
-    <link rel="preconnect" href="https://api.fontshare.com" crossorigin />
-    <link
-      href="https://api.fontshare.com/v2/css?f[]=cabinet-grotesk@400,500,700,800&f[]=satoshi@400,500,700&display=swap"
-      rel="stylesheet"
-    />
+    <link rel="preload" href="/fonts/cabinet-grotesk-800.woff2" as="font" type="font/woff2" crossorigin />
+    <link rel="preload" href="/fonts/satoshi-400.woff2" as="font" type="font/woff2" crossorigin />
 
     <!-- Prevent FOUC: hide body until loader dismisses -->
     <style is:inline>
@@ -58,6 +57,8 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     </style>
   </head>
   <body class="overflow-x-hidden">
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[99999] focus:px-4 focus:py-2 focus:bg-blue focus:text-white focus:rounded-lg focus:text-sm focus:font-medium">Aller au contenu</a>
+
     <!-- ── Page loader (first visit only) ── -->
     <div id="page-loader" class="fixed inset-0 z-[9999] flex items-center justify-center" style="background-color: #273CC6;">
       <div class="flex flex-col items-center gap-4">
@@ -75,7 +76,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
 
     <div class="page-content">
       <Header />
-      <main>
+      <main id="main">
         <slot />
       </main>
       <Footer />
@@ -101,21 +102,28 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         gsap.ticker.lagSmoothing(0);
       }
 
-      // ── Initial page loader (minimum 2s) ──
+      // ── Initial page loader (first visit only, max 800ms) ──
       function runLoader() {
         const loader = document.getElementById('page-loader');
         const bar = document.getElementById('loader-bar');
         const content = document.querySelector('.page-content');
         if (!loader || !bar || !content) return;
 
-        const MIN_DURATION = 2000;
+        // Skip loader on return visits
+        if (sessionStorage.getItem('sk-visited')) {
+          loader.style.display = 'none';
+          content.classList.add('loaded');
+          document.dispatchEvent(new Event('loader-done'));
+          return;
+        }
+        sessionStorage.setItem('sk-visited', '1');
+
+        const MIN_DURATION = 800;
         const startTime = Date.now();
-        let progress = 0;
 
         const interval = setInterval(() => {
           const elapsed = Date.now() - startTime;
-          // Progress follows elapsed time, reaches 90% quickly then slows
-          progress = Math.min(90, (elapsed / MIN_DURATION) * 100);
+          const progress = Math.min(90, (elapsed / MIN_DURATION) * 100);
           bar.style.width = progress + '%';
 
           if (elapsed >= MIN_DURATION) {
@@ -124,7 +132,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
             setTimeout(() => {
               gsap.to(loader, {
                 opacity: 0,
-                duration: 0.5,
+                duration: 0.4,
                 ease: 'power2.inOut',
                 onComplete: () => {
                   loader.style.display = 'none';
@@ -132,9 +140,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
                   document.dispatchEvent(new Event('loader-done'));
                 },
               });
-            }, 300);
+            }, 200);
           }
-        }, 50);
+        }, 30);
       }
 
       // ── Page transition (on navigation) ──
@@ -170,17 +178,19 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       }
 
       // ── Hero animation ──
-      function animateHero() {
+      function animateHero(animate = true) {
         const heroElements = document.querySelectorAll('.hero-animated');
         if (heroElements.length === 0) return;
+
+        // Kill any previous GSAP on these elements
+        gsap.killTweensOf('.hero-eyebrow, .hero-line, .hero-sub, .hero-actions');
 
         // Make visible
         heroElements.forEach((el) => {
           (el as HTMLElement).style.visibility = 'visible';
         });
 
-        // Kill any previous GSAP on these elements
-        gsap.killTweensOf('.hero-eyebrow, .hero-line, .hero-sub, .hero-actions');
+        if (!animate) return; // Just show, no animation
 
         const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
         tl.from('.hero-eyebrow', { opacity: 0, x: -20, duration: 0.8 }, 0);
@@ -193,11 +203,20 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
       let isFirstLoad = true;
 
       // First load: run loader, then hero
-      runLoader();
       initLenis();
-      document.addEventListener('loader-done', () => {
-        animateHero();
-      }, { once: true });
+
+      const hasVisited = sessionStorage.getItem('sk-visited');
+      runLoader();
+
+      if (hasVisited) {
+        // Return visit: no loader, show hero immediately
+        animateHero(false);
+      } else {
+        // First visit: animate hero after loader
+        document.addEventListener('loader-done', () => {
+          animateHero(true);
+        }, { once: true });
+      }
 
       // Before navigation (transition out)
       document.addEventListener('astro:before-preparation', () => {
@@ -224,10 +243,9 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
         const content = document.querySelector('.page-content');
         content?.classList.add('loaded');
 
+        // Show hero immediately (no delay), animate transition overlay on top
+        animateHero(false);
         playTransitionIn();
-
-        // Animate hero if we landed on homepage
-        setTimeout(() => animateHero(), 400); // Wait for transition overlay to clear
       });
     </script>
   </body>

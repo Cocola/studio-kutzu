@@ -32,11 +32,21 @@ import { siteConfig } from '../data/site';
 
           <div class="flex items-start gap-4">
             <div class="w-10 h-10 rounded-lg bg-pink flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-ink">Téléphone</p>
+              <a href="tel:+33603200226" class="text-sm text-blue hover:underline">{siteConfig.phone}</a>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-pink flex items-center justify-center flex-shrink-0">
               <svg class="w-5 h-5 text-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
             </div>
             <div>
               <p class="text-sm font-medium text-ink">Localisation</p>
-              <p class="text-sm text-ink-muted">Cambo-les-Bains, 64250<br/>Pays Basque, France</p>
+              <p class="text-sm text-ink-muted">{siteConfig.address}<br/>Cambo-les-Bains, 64250<br/>Pays Basque, France</p>
             </div>
           </div>
 
@@ -130,8 +140,13 @@ import { siteConfig } from '../data/site';
           </button>
         </form>
 
+        <!-- Error state -->
+        <div id="form-error" class="hidden mt-4 p-4 rounded-xl bg-red-50 border border-red-200" role="alert" aria-live="assertive">
+          <p class="text-sm text-red-700 font-medium">Une erreur est survenue. Veuillez réessayer ou m'envoyer un email directement.</p>
+        </div>
+
         <!-- Success state (hidden by default) -->
-        <div id="form-success" class="hidden text-center py-12">
+        <div id="form-success" class="hidden text-center py-12" role="status" aria-live="polite">
           <div class="w-16 h-16 rounded-full bg-pink flex items-center justify-center mx-auto mb-4">
             <svg class="w-8 h-8 text-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
           </div>
@@ -139,6 +154,40 @@ import { siteConfig } from '../data/site';
           <p class="text-sm text-ink-muted">Merci pour votre message. Je vous réponds dans les plus brefs délais.</p>
         </div>
       </div>
+
+      <script>
+        const form = document.getElementById('contact-form') as HTMLFormElement;
+        const success = document.getElementById('form-success');
+        const error = document.getElementById('form-error');
+
+        form?.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          error?.classList.add('hidden');
+          const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+          const originalText = btn.innerHTML;
+          btn.disabled = true;
+          btn.innerHTML = '<span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> Envoi...';
+
+          try {
+            const data = new FormData(form);
+            const res = await fetch('https://formspree.io/f/contact@studiokutzu.com', {
+              method: 'POST',
+              body: data,
+              headers: { 'Accept': 'application/json' },
+            });
+            if (res.ok) {
+              form.classList.add('hidden');
+              success?.classList.remove('hidden');
+            } else {
+              throw new Error('fail');
+            }
+          } catch {
+            error?.classList.remove('hidden');
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+          }
+        });
+      </script>
     </div>
   </section>
 </Layout>

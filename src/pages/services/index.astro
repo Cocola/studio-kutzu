@@ -1,6 +1,7 @@
 ---
-import Layout from '../layouts/Layout.astro';
-import { services } from '../data/site';
+import Layout from '../../layouts/Layout.astro';
+import CtaSection from '../../components/sections/CtaSection.astro';
+import { services } from '../../data/site';
 
 const faqs = [
   { q: "Combien coûte la création d'un site web ?", a: "Chaque projet est unique. Le tarif dépend de la complexité, du nombre de pages et des fonctionnalités. Je vous propose un devis personnalisé après un premier échange gratuit." },
@@ -26,37 +27,32 @@ const faqs = [
 
   <!-- Services -->
   <section class="py-24 px-6">
-    <div class="max-w-4xl mx-auto flex flex-col gap-24">
-      {services.map((service, i) => (
-        <div id={service.slug} class="scroll-mt-24">
-          <div class="flex items-start gap-4 mb-6">
-            <div class="w-10 h-10 rounded-lg flex items-center justify-center flex-shrink-0" style="background-color: #FFE7E9;">
-              <svg class="w-5 h-5" style="color: #273CC6;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
-                {i === 0 && <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>}
-                {i === 1 && <><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/><path d="M9 21V9"/></>}
-                {i === 2 && <><circle cx="12" cy="12" r="10"/><path d="M8 12l3 3 5-5"/></>}
-                {i === 3 && <><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></>}
-              </svg>
+    <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+      {services.map((service) => (
+          <a href={`/services/${service.slug}`} id={service.slug} class={`scroll-mt-24 group block rounded-2xl bg-surface border border-border ${service.accentBorder} border-t-[3px] p-7 transition-all duration-300 hover:shadow-lg hover:shadow-ink/5 hover:-translate-y-1`}>
+            <div class={`w-12 h-12 ${service.iconContainer} flex items-center justify-center mb-5 ${service.iconColor} transition-transform duration-300 group-hover:scale-110`}>
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" set:html={service.icon} />
             </div>
-            <div>
-              <h2 class="font-display text-2xl font-extrabold text-ink">{service.name}</h2>
-              <p class="text-ink-muted leading-relaxed mt-2">{service.description}</p>
+            <h2 class="font-display text-xl font-extrabold text-ink mb-2 group-hover:text-blue transition-colors">{service.name}</h2>
+            <p class="text-ink-muted text-sm leading-relaxed mb-5">{service.description}</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              {service.features.map((feature) => (
+                <span class="text-xs px-3 py-1.5 rounded-full font-medium bg-surface-alt text-ink-muted">
+                  {feature}
+                </span>
+              ))}
             </div>
-          </div>
-          <div class="grid grid-cols-2 sm:grid-cols-4 gap-3 ml-14">
-            {service.features.map((feature) => (
-              <div class="px-4 py-3 rounded-xl text-center text-sm font-medium text-ink" style="background-color: #FFF0F1;">
-                {feature}
-              </div>
-            ))}
-          </div>
-        </div>
+            <span class="inline-flex items-center gap-1.5 text-sm font-medium text-blue opacity-0 group-hover:opacity-100 transition-opacity">
+              En savoir plus
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </span>
+          </a>
       ))}
     </div>
   </section>
 
   <!-- FAQ -->
-  <section class="py-24 px-6" style="background-color: #FFF0F1;">
+  <section class="py-24 px-6 bg-surface-alt">
     <div class="max-w-3xl mx-auto">
       <h2 class="font-display text-3xl font-extrabold tracking-tight text-ink mb-10 text-center">Questions fréquentes</h2>
       <div class="flex flex-col gap-3">
@@ -73,17 +69,7 @@ const faqs = [
     </div>
   </section>
 
-  <!-- CTA -->
-  <section class="py-24 px-6">
-    <div class="max-w-2xl mx-auto text-center">
-      <h2 class="font-display text-3xl font-extrabold tracking-tight text-ink mb-4">Un projet en tête ?</h2>
-      <p class="text-ink-muted text-lg mb-8">Premier échange découverte sans engagement.</p>
-      <a href="/contact" class="inline-flex items-center gap-3 px-8 py-4 bg-blue text-white rounded-full text-lg font-bold font-display transition-all duration-300 hover:bg-blue-dark hover:-translate-y-0.5">
-        Parlons-en
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </a>
-    </div>
-  </section>
+  <CtaSection />
 
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org", "@type": "FAQPage",

@@ -1,0 +1,157 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CtaSection from '../../components/sections/CtaSection.astro';
+import { services, portfolio } from '../../data/site';
+import type { GetStaticPaths } from 'astro';
+
+export const getStaticPaths: GetStaticPaths = () => {
+  const keywordsMap: Record<string, string[]> = {
+    'social-media': ['community management', 'stratégie communication', 'stratégie social media'],
+    'sites-web': ['création site web', 'e-commerce', 'site multilingue', 'seo'],
+    'identite-visuelle': ['identité visuelle', 'packaging'],
+    'marketing-digital': ['marketing digital', 'stratégie digitale'],
+    'editions-imprimees': ['édition imprimée', 'conception éditoriale'],
+    'evenementiel': ['communication événementielle', 'événementiel'],
+  };
+
+  return services.map((service) => {
+    const keywords = keywordsMap[service.slug] || [];
+    const relatedProjects = portfolio.filter(p =>
+      p.services.some(svc => keywords.some(kw => svc.toLowerCase().includes(kw.toLowerCase())))
+    );
+    return {
+      params: { slug: service.slug },
+      props: { service, relatedProjects },
+    };
+  });
+};
+
+const { service, relatedProjects } = Astro.props;
+
+const otherServices = services.filter(s => s.slug !== service.slug);
+---
+
+<Layout
+  title={`${service.name} | Studio Kutzu — Communication Digitale au Pays Basque`}
+  description={service.description}
+>
+  <!-- Back link -->
+  <section class="pt-28 px-6">
+    <div class="max-w-5xl mx-auto">
+      <a href="/services" class="inline-flex items-center gap-2 text-sm text-ink-muted hover:text-blue transition-colors group">
+        <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        Tous les services
+      </a>
+    </div>
+  </section>
+
+  <!-- Service hero -->
+  <section class="pt-8 pb-16 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="flex items-start gap-5 mb-8">
+        <div class={`w-14 h-14 ${service.iconContainer} flex items-center justify-center flex-shrink-0 ${service.iconColor}`}>
+          <svg class="w-7 h-7" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" set:html={service.icon} />
+        </div>
+        <div>
+          <h1 class="font-display text-3xl md:text-4xl font-extrabold tracking-tight text-ink mb-3">
+            {service.name}
+          </h1>
+          <p class="text-ink-muted text-lg leading-relaxed max-w-2xl">
+            {service.description}
+          </p>
+        </div>
+      </div>
+
+      <!-- Features grid -->
+      <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3 mb-12">
+        {service.features.map((feature) => (
+          <div class="flex items-center gap-2.5 p-4 rounded-xl bg-surface border border-border">
+            <div class="w-1.5 h-1.5 rounded-full bg-blue flex-shrink-0"></div>
+            <p class="text-sm font-medium text-ink">{feature}</p>
+          </div>
+        ))}
+      </div>
+
+      <!-- CTA inline -->
+      <a href="/contact" class="inline-flex items-center gap-3 px-7 py-3.5 bg-blue text-white rounded-full font-bold font-display transition-all duration-300 hover:bg-blue-dark hover:-translate-y-0.5">
+        Discuter de votre projet
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <!-- Related projects -->
+  {relatedProjects.length > 0 && (
+    <section class="py-16 px-6 bg-surface-alt">
+      <div class="max-w-5xl mx-auto">
+        <h2 class="font-display text-2xl font-extrabold text-ink mb-8">
+          Réalisations en {service.name.toLowerCase()}
+        </h2>
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {relatedProjects.map((project) => (
+            <a href={`/realisations/${project.slug}`} class="group block rounded-2xl overflow-hidden bg-surface border border-border transition-all duration-300 hover:shadow-xl hover:shadow-ink/8 hover:-translate-y-1 hover:border-border-strong">
+              <div class="aspect-[4/3] overflow-hidden">
+                <img
+                  src={project.image.desktop}
+                  alt={`${project.client} — ${project.services.join(', ')}`}
+                  class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.05]"
+                  loading="lazy"
+                />
+              </div>
+              <div class="p-5">
+                <h3 class="font-display text-lg font-bold text-ink mb-1 group-hover:text-blue transition-colors">{project.client}</h3>
+                <p class="text-sm text-ink-muted line-clamp-2 mb-3">{project.description}</p>
+                <div class="flex flex-wrap gap-1.5">
+                  {project.services.map((svc) => (
+                    <span class="text-xs px-2 py-0.5 rounded-full font-medium bg-pink text-blue">{svc}</span>
+                  ))}
+                </div>
+              </div>
+            </a>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Other services -->
+  <section class="py-16 px-6">
+    <div class="max-w-5xl mx-auto">
+      <h2 class="font-display text-2xl font-extrabold text-ink mb-8">Autres services</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+        {otherServices.slice(0, 3).map((other) => (
+          <a href={`/services/${other.slug}`} class="group flex items-start gap-4 p-5 rounded-xl bg-surface border border-border transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
+            <div class={`w-10 h-10 ${other.iconContainer} flex items-center justify-center flex-shrink-0 ${other.iconColor}`}>
+              <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" set:html={other.icon} />
+            </div>
+            <div>
+              <h3 class="font-display text-sm font-bold text-ink group-hover:text-blue transition-colors">{other.name}</h3>
+              <p class="text-xs text-ink-muted mt-1">{other.shortDescription}</p>
+            </div>
+          </a>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaSection heading={`Un projet en ${service.name.toLowerCase()} ?`} buttonLabel="Me contacter" />
+
+  <!-- JSON-LD -->
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org",
+    "@type": "Service",
+    "name": service.name,
+    "description": service.description,
+    "provider": {
+      "@type": "LocalBusiness",
+      "name": "Studio Kutzu",
+      "address": {
+        "@type": "PostalAddress",
+        "addressLocality": "Cambo-les-Bains",
+        "postalCode": "64250",
+        "addressCountry": "FR",
+      },
+    },
+    "areaServed": "Pays Basque",
+  })} />
+</Layout>
