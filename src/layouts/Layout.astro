@@ -4,7 +4,8 @@ import { ClientRouter } from 'astro:transitions';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
 import { DEFAULT_LOCALE, HTML_LANG, LOCALES, OG_LOCALE, type Locale } from '../i18n/config';
-import { getLocaleFromUrl, localePath, stripLocale, t } from '../i18n/utils';
+import { getLocaleFromUrl, localePath, localize, stripLocale, t } from '../i18n/utils';
+import { siteConfig } from '../data/site';
 
 interface Props {
   title: string;
@@ -26,6 +27,54 @@ const alternates = LOCALES.map((loc) => ({
   href: new URL(localePath(cleanPath, loc), Astro.site).toString(),
 }));
 const xDefaultHref = new URL(localePath(cleanPath, DEFAULT_LOCALE), Astro.site).toString();
+
+const phoneE164 = `+33${siteConfig.phone.replace(/\D/g, '').replace(/^0/, '')}`;
+
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@type': 'ProfessionalService',
+  '@id': 'https://studiokutzu.com/#business',
+  name: siteConfig.name,
+  alternateName: 'Kutzu',
+  description: resolvedDescription,
+  url: 'https://studiokutzu.com/',
+  telephone: phoneE164,
+  email: siteConfig.email,
+  image: 'https://studiokutzu.com/og-image.jpg',
+  logo: 'https://studiokutzu.com/logo.svg',
+  priceRange: '€€',
+  founder: {
+    '@type': 'Person',
+    name: siteConfig.founder,
+    jobTitle: localize(siteConfig.founderTitle, locale),
+  },
+  foundingDate: String(siteConfig.founded),
+  address: {
+    '@type': 'PostalAddress',
+    streetAddress: siteConfig.address,
+    postalCode: siteConfig.postalCode,
+    addressLocality: localize(siteConfig.city, locale),
+    addressRegion: localize(siteConfig.region, locale),
+    addressCountry: 'FR',
+  },
+  geo: {
+    '@type': 'GeoCoordinates',
+    latitude: 43.3597,
+    longitude: -1.4028,
+  },
+  areaServed: [
+    { '@type': 'City', name: 'Cambo-les-Bains' },
+    { '@type': 'City', name: 'Bayonne' },
+    { '@type': 'City', name: 'Biarritz' },
+    { '@type': 'City', name: 'Anglet' },
+    { '@type': 'City', name: 'Saint-Jean-de-Luz' },
+    { '@type': 'Place', name: 'Pays Basque' },
+    { '@type': 'Place', name: 'Nouvelle-Aquitaine' },
+    { '@type': 'Country', name: 'France' },
+  ],
+  sameAs: [siteConfig.instagram, siteConfig.linkedin, siteConfig.facebook],
+  inLanguage: LOCALES.map((l) => HTML_LANG[l]),
+};
 ---
 
 <!doctype html>
@@ -55,7 +104,13 @@ const xDefaultHref = new URL(localePath(cleanPath, DEFAULT_LOCALE), Astro.site).
     <meta name="twitter:title" content={title} />
     <meta name="twitter:description" content={resolvedDescription} />
     <meta property="og:image" content="https://studiokutzu.com/og-image.jpg" />
+    <meta property="og:image:type" content="image/jpeg" />
+    <meta property="og:image:width" content="1200" />
+    <meta property="og:image:height" content="630" />
+    <meta property="og:image:alt" content="Studio Kutzu" />
     <meta name="twitter:image" content="https://studiokutzu.com/og-image.jpg" />
+
+    <script type="application/ld+json" set:html={JSON.stringify(jsonLd)} />
 
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <link rel="manifest" href="/manifest.json" />
