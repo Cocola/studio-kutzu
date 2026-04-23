@@ -1,0 +1,163 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CtaSection from '../sections/CtaSection.astro';
+import { portfolio, type Project } from '../../data/site';
+import { type Locale } from '../../i18n/config';
+import { localePath, localize, t } from '../../i18n/utils';
+
+interface Props {
+  locale: Locale;
+  project: Project;
+}
+
+const { locale, project } = Astro.props;
+
+const currentIndex = portfolio.findIndex(p => p.slug === project.slug);
+const nextProject = portfolio[(currentIndex + 1) % portfolio.length];
+const prevProject = portfolio[(currentIndex - 1 + portfolio.length) % portfolio.length];
+
+const projectServices = localize(project.services, locale);
+const projectDescription = localize(project.description, locale);
+const projectLocation = localize(project.location, locale);
+---
+
+<Layout
+  title={`${project.client} ${t('meta.portfolioDetail.suffix', locale)}`}
+  description={projectDescription}
+  locale={locale}
+>
+  <!-- Back link -->
+  <section class="pt-28 px-6">
+    <div class="max-w-5xl mx-auto">
+      <a href={localePath('/realisations', locale)} class="inline-flex items-center gap-2 text-sm text-ink-muted hover:text-blue transition-colors group">
+        <svg class="w-4 h-4 group-hover:-translate-x-1 transition-transform" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        {t('common.allProjects', locale)}
+      </a>
+    </div>
+  </section>
+
+  <!-- Hero image -->
+  <section class="pt-6 pb-12 px-6">
+    <div class="max-w-5xl mx-auto">
+      <div class="rounded-2xl overflow-hidden border border-border">
+        <img
+          src={project.image.desktop}
+          alt={`${project.client} — ${projectServices.join(', ')}`}
+          class="w-full aspect-[16/10] object-cover object-center"
+          loading="eager"
+        />
+      </div>
+    </div>
+  </section>
+
+  <!-- Project info -->
+  <section class="pb-16 px-6">
+    <div class="max-w-5xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-12">
+      <!-- Left: main content -->
+      <div>
+        <h1 class="font-display text-3xl md:text-4xl font-extrabold tracking-tight text-ink mb-4">
+          {project.client}
+        </h1>
+        <p class="text-ink-muted text-lg leading-relaxed mb-8">
+          {projectDescription}
+        </p>
+
+        <div class="flex flex-wrap gap-2 mb-8">
+          {projectServices.map((svc) => (
+            <span class="text-sm px-4 py-2 rounded-full font-medium bg-pink text-blue">{svc}</span>
+          ))}
+        </div>
+
+        {(project.website || project.instagram) && (
+          <div class="flex items-center gap-4">
+            {project.website && (
+              <a
+                href={`https://${project.website}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-5 py-2.5 bg-blue text-white rounded-full text-sm font-medium transition-all duration-300 hover:bg-blue-dark hover:-translate-y-0.5"
+              >
+                {t('cta.visitSite', locale)}
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              </a>
+            )}
+            {project.instagram && (
+              <a
+                href={project.instagram}
+                target="_blank"
+                rel="noopener noreferrer"
+                class="inline-flex items-center gap-2 px-5 py-2.5 border border-border text-ink rounded-full text-sm font-medium transition-all duration-300 hover:border-blue hover:text-blue hover:-translate-y-0.5"
+              >
+                {t('cta.instagram', locale)}
+                <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+              </a>
+            )}
+          </div>
+        )}
+      </div>
+
+      <!-- Right: metadata sidebar -->
+      <div class="flex flex-col gap-5">
+        <div class="p-5 rounded-xl bg-surface-alt">
+          <p class="text-xs font-medium uppercase tracking-wider text-ink-faint mb-1">{t('portfolioDetail.meta.client', locale)}</p>
+          <p class="text-sm font-bold text-ink">{project.client}</p>
+        </div>
+        <div class="p-5 rounded-xl bg-surface-alt">
+          <p class="text-xs font-medium uppercase tracking-wider text-ink-faint mb-1">{t('portfolioDetail.meta.location', locale)}</p>
+          <p class="text-sm font-bold text-ink">{projectLocation}</p>
+        </div>
+        <div class="p-5 rounded-xl bg-surface-alt">
+          <p class="text-xs font-medium uppercase tracking-wider text-ink-faint mb-1">{t('portfolioDetail.meta.year', locale)}</p>
+          <p class="text-sm font-bold text-ink">{project.year}</p>
+        </div>
+        <div class="p-5 rounded-xl bg-surface-alt">
+          <p class="text-xs font-medium uppercase tracking-wider text-ink-faint mb-1">{t('portfolioDetail.meta.services', locale)}</p>
+          <p class="text-sm font-bold text-ink">{projectServices.join(', ')}</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Gallery -->
+  {project.gallery && project.gallery.length > 0 && (
+    <section class="pb-16 px-6">
+      <div class="max-w-5xl mx-auto">
+        <h2 class="font-display text-2xl font-extrabold text-ink mb-6">{t('common.gallery', locale)}</h2>
+        <div class={`grid gap-4 ${project.gallery.length === 1 ? 'grid-cols-1 max-w-2xl' : 'grid-cols-1 sm:grid-cols-2'}`}>
+          {project.gallery.map((img, i) => (
+            <div class="rounded-2xl overflow-hidden border border-border aspect-[4/3]">
+              <img
+                src={img}
+                alt={`${project.client} — ${t('portfolioDetail.imageAlt.visual', locale)} ${i + 1}`}
+                class="w-full h-full object-cover object-center"
+                loading="lazy"
+              />
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  )}
+
+  <!-- Navigation between projects -->
+  <section class="px-6 pb-16">
+    <div class="max-w-5xl mx-auto border-t border-border pt-10 grid grid-cols-2 gap-6">
+      <a href={localePath(`/realisations/${prevProject.slug}`, locale)} class="group flex items-center gap-4">
+        <svg class="w-5 h-5 text-ink-faint group-hover:text-blue group-hover:-translate-x-1 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <div>
+          <p class="text-xs text-ink-faint">{t('common.prevProject', locale)}</p>
+          <p class="text-sm font-bold text-ink group-hover:text-blue transition-colors">{prevProject.client}</p>
+        </div>
+      </a>
+      <a href={localePath(`/realisations/${nextProject.slug}`, locale)} class="group flex items-center justify-end gap-4 text-right">
+        <div>
+          <p class="text-xs text-ink-faint">{t('common.nextProject', locale)}</p>
+          <p class="text-sm font-bold text-ink group-hover:text-blue transition-colors">{nextProject.client}</p>
+        </div>
+        <svg class="w-5 h-5 text-ink-faint group-hover:text-blue group-hover:translate-x-1 transition-all" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+      </a>
+    </div>
+  </section>
+
+  <CtaSection locale={locale} heading={t('portfolioDetail.cta.heading', locale)} buttonLabel={t('cta.contactMe', locale)} />
+</Layout>

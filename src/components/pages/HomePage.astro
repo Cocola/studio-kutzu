@@ -1,0 +1,130 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import HeroSection from '../sections/HeroSection.astro';
+import CtaSection from '../sections/CtaSection.astro';
+import { services, portfolio, siteConfig } from '../../data/site';
+import { type Locale } from '../../i18n/config';
+import { localePath, localize, t } from '../../i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+---
+
+<Layout title={t('meta.home.title', locale)} description={t('meta.home.description', locale)} locale={locale}>
+  <HeroSection locale={locale} />
+
+  <!-- ─── Services ─── -->
+  <section class="py-24 px-6" id="services">
+    <div class="max-w-6xl mx-auto">
+      <div class="grid grid-cols-1 lg:grid-cols-[1fr_1.4fr] gap-16 items-start">
+        <div class="lg:sticky lg:top-32">
+          <span class="text-xs font-medium uppercase tracking-[0.2em] text-gold-text mb-3 block">{t('home.services.eyebrow', locale)}</span>
+          <h2 class="font-display text-3xl md:text-4xl font-extrabold tracking-tight text-ink mb-4">
+            {t('home.services.heading', locale)}
+          </h2>
+          <p class="text-ink-muted leading-relaxed max-w-sm">
+            {t('home.services.lead', locale)}
+          </p>
+        </div>
+
+        <div class="flex flex-col divide-y divide-border">
+          {services.map((service) => (
+            <a href={`${localePath('/services', locale)}#${service.slug}`} class="group flex items-start gap-5 py-7 first:pt-0 last:pb-0 transition-colors duration-300">
+              <div class={`w-11 h-11 ${service.iconContainer} flex items-center justify-center flex-shrink-0 mt-0.5 ${service.iconColor} group-hover:scale-110 transition-all duration-300`}>
+                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={service.icon} />
+              </div>
+              <div class="flex-1 min-w-0">
+                <h3 class="font-display text-lg font-bold text-ink mb-1 group-hover:text-blue transition-colors">
+                  {localize(service.name, locale)}
+                </h3>
+                <p class="text-sm text-ink-muted leading-relaxed">{localize(service.description, locale)}</p>
+                <p class="text-xs text-ink-faint mt-2">{localize(service.features, locale).join(' · ')}</p>
+              </div>
+              <svg class="w-4 h-4 text-ink-faint opacity-0 group-hover:opacity-100 group-hover:text-blue transition-all duration-300 flex-shrink-0 mt-2" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
+          ))}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── Réalisations ─── -->
+  <section class="pt-20 pb-28 px-6 bg-surface-alt" id="realisations">
+    <div class="max-w-6xl mx-auto">
+      <div class="flex items-end justify-between mb-12 flex-wrap gap-4">
+        <div>
+          <span class="text-xs font-medium uppercase tracking-[0.2em] text-gold-text mb-3 block">{t('home.portfolio.eyebrow', locale)}</span>
+          <h2 class="font-display text-3xl md:text-4xl font-extrabold tracking-tight text-ink">
+            {t('home.portfolio.heading', locale)}
+          </h2>
+        </div>
+        <a href={localePath('/realisations', locale)} class="text-sm font-semibold text-blue hover:underline underline-offset-4 transition-colors">
+          {t('cta.seeAll', locale)} →
+        </a>
+      </div>
+
+      <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+        {portfolio.filter(p => p.featured).map((project) => {
+          const services = localize(project.services, locale);
+          return (
+            <a href={localePath(`/realisations/${project.slug}`, locale)} class="group block rounded-2xl overflow-hidden bg-surface border border-border transition-all duration-300 hover:shadow-xl hover:shadow-ink/8 hover:-translate-y-1 hover:border-border-strong">
+              <div class="aspect-[4/3] overflow-hidden">
+                <img
+                  src={project.image.desktop}
+                  alt={`${project.client} — ${services.join(', ')}`}
+                  width="640"
+                  height="480"
+                  class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.05]"
+                  loading="lazy"
+                  decoding="async"
+                />
+              </div>
+              <div class="p-5">
+                <h3 class="font-display text-lg font-bold text-ink mb-2 group-hover:text-blue transition-colors">{project.client}</h3>
+                <p class="text-sm text-ink-muted mb-3 line-clamp-2">{localize(project.description, locale)}</p>
+                <div class="flex flex-wrap gap-1.5">
+                  {services.map((svc) => (
+                    <span class="text-xs px-2.5 py-1 rounded-full font-medium bg-pink text-blue">{svc}</span>
+                  ))}
+                </div>
+              </div>
+            </a>
+          );
+        })}
+      </div>
+    </div>
+  </section>
+
+  <!-- ─── À propos ─── -->
+  <section class="py-28 px-6">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1.2fr_1fr] gap-16 items-center">
+      <div>
+        <span class="text-xs font-medium uppercase tracking-[0.2em] text-gold-text mb-3 block">{t('home.about.eyebrow', locale)}</span>
+        <h2 class="font-display text-3xl md:text-4xl font-extrabold tracking-tight text-ink leading-tight mb-6">
+          Maider Gaicotchea
+        </h2>
+        <blockquote class="text-xl md:text-2xl font-display font-bold text-ink leading-snug mb-6 border-l-2 border-gold pl-5">
+          {localize(siteConfig.tagline, locale)}
+        </blockquote>
+        <p class="text-ink-muted leading-relaxed mb-8">
+          {t('home.about.intro', locale)}
+        </p>
+        <a href={localePath('/a-propos', locale)} class="inline-flex items-center gap-2 text-sm font-semibold text-blue hover:gap-3 transition-all duration-300">
+          {t('cta.learnMore', locale)}
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </a>
+      </div>
+
+      <div>
+        <div class="aspect-[4/5] rounded-2xl overflow-hidden">
+          <img src="/maider.jpg" alt={t('common.maiderAlt', locale)} width="640" height="800" class="w-full h-full object-cover" loading="lazy" decoding="async" />
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <CtaSection locale={locale} heading={t('home.cta.heading', locale)} text={t('home.cta.text', locale)} />
+</Layout>

@@ -1,6 +1,6 @@
 ---
-import PortfolioDetailPage from '../../components/pages/PortfolioDetailPage.astro';
-import { portfolio } from '../../data/site';
+import PortfolioDetailPage from '../../../components/pages/PortfolioDetailPage.astro';
+import { portfolio } from '../../../data/site';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () => {
@@ -13,4 +13,4 @@ export const getStaticPaths: GetStaticPaths = () => {
 const { project } = Astro.props;
 ---
 
-<PortfolioDetailPage locale="fr" project={project} />
+<PortfolioDetailPage locale="eu" project={project} />

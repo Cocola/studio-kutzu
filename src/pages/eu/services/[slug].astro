@@ -1,6 +1,6 @@
 ---
-import ServiceDetailPage from '../../components/pages/ServiceDetailPage.astro';
-import { services } from '../../data/site';
+import ServiceDetailPage from '../../../components/pages/ServiceDetailPage.astro';
+import { services } from '../../../data/site';
 import type { GetStaticPaths } from 'astro';
 
 export const getStaticPaths: GetStaticPaths = () => {
@@ -13,4 +13,4 @@ export const getStaticPaths: GetStaticPaths = () => {
 const { service } = Astro.props;
 ---
 
-<ServiceDetailPage locale="fr" service={service} />
+<ServiceDetailPage locale="eu" service={service} />

@@ -1,35 +1,41 @@
 ---
-// Hero — warm, editorial, confident
-// Animation handled by Layout.astro script (survives View Transitions)
+import { type Locale } from '../../i18n/config';
+import { getLocaleFromUrl, localePath, t } from '../../i18n/utils';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = getLocaleFromUrl(Astro.url) } = Astro.props;
 ---
 
-<section class="relative min-h-[90dvh] flex items-center overflow-hidden px-6 pt-32 pb-20 md:pt-0 md:pb-0" aria-label="Accueil">
+<section class="relative min-h-[90dvh] flex items-center overflow-hidden px-6 pt-32 pb-20 md:pt-0 md:pb-0" aria-label={t('hero.ariaLabel', locale)}>
   <div class="absolute inset-0 -z-10 bg-pink/30" aria-hidden="true"></div>
   <div class="absolute top-[-20%] right-[-10%] w-[50vw] h-[50vw] -z-10 rounded-full bg-blue/[0.04] blur-[100px]" aria-hidden="true"></div>
 
   <div class="mx-auto max-w-6xl w-full">
     <div class="flex items-center gap-3 mb-6 hero-eyebrow hero-animated">
       <span class="h-px w-8 bg-gold" aria-hidden="true"></span>
-      <span class="text-xs font-medium uppercase tracking-[0.2em] text-gold-text">Cambo-les-Bains · Pays Basque</span>
+      <span class="text-xs font-medium uppercase tracking-[0.2em] text-gold-text">{t('hero.eyebrow', locale)}</span>
     </div>
 
     <h1 class="font-display font-extrabold text-ink leading-[1.05] tracking-tight mb-6" style="font-size: clamp(2.75rem, 6.5vw, 5rem);">
-      <span class="block overflow-hidden"><span class="hero-line hero-animated block">Votre histoire</span></span>
-      <span class="block overflow-hidden"><span class="hero-line hero-animated block">mérite d'être</span></span>
-      <span class="block overflow-hidden"><span class="hero-line hero-animated block text-blue">racontée<span class="inline-block w-2.5 h-2.5 rounded-full bg-gold ml-1 align-middle relative -top-1" aria-hidden="true"></span></span></span>
+      <span class="block overflow-hidden"><span class="hero-line hero-animated block">{t('hero.line1', locale)}</span></span>
+      <span class="block overflow-hidden"><span class="hero-line hero-animated block">{t('hero.line2', locale)}</span></span>
+      <span class="block overflow-hidden"><span class="hero-line hero-animated block text-blue">{t('hero.line3', locale)}<span class="inline-block w-2.5 h-2.5 rounded-full bg-gold ml-1 align-middle relative -top-1" aria-hidden="true"></span></span></span>
     </h1>
 
     <p class="text-ink-muted text-lg md:text-xl leading-relaxed max-w-lg mb-8 hero-sub hero-animated">
-      Je vous accompagne dans vos projets de communication pour raconter votre histoire et atteindre vos objectifs.
+      {t('hero.subtitle', locale)}
     </p>
 
     <div class="flex items-center gap-5 flex-wrap hero-actions hero-animated">
-      <a href="/contact" class="inline-flex items-center gap-3 px-7 py-3.5 bg-blue text-white rounded-full font-medium transition-all duration-300 hover:bg-blue-dark hover:shadow-lg hover:shadow-blue/20 hover:-translate-y-0.5 focus-visible:outline-offset-4">
-        Parlons de votre projet
+      <a href={localePath('/contact', locale)} class="inline-flex items-center gap-3 px-7 py-3.5 bg-blue text-white rounded-full font-medium transition-all duration-300 hover:bg-blue-dark hover:shadow-lg hover:shadow-blue/20 hover:-translate-y-0.5 focus-visible:outline-offset-4">
+        {t('cta.talkProject', locale)}
         <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
-      <a href="/realisations" class="text-ink-muted font-medium hover:text-blue transition-colors border-b border-border-strong hover:border-blue pb-0.5">
-        Voir mes réalisations
+      <a href={localePath('/realisations', locale)} class="text-ink-muted font-medium hover:text-blue transition-colors border-b border-border-strong hover:border-blue pb-0.5">
+        {t('cta.seeProjects', locale)}
       </a>
     </div>
   </div>

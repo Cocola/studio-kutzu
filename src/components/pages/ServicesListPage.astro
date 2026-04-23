@@ -1,0 +1,86 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CtaSection from '../sections/CtaSection.astro';
+import { services } from '../../data/site';
+import { type Locale } from '../../i18n/config';
+import { localePath, localize, t } from '../../i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const faqs = [
+  { q: t('services.faq.q1.q', locale), a: t('services.faq.q1.a', locale) },
+  { q: t('services.faq.q2.q', locale), a: t('services.faq.q2.a', locale) },
+  { q: t('services.faq.q3.q', locale), a: t('services.faq.q3.a', locale) },
+  { q: t('services.faq.q4.q', locale), a: t('services.faq.q4.a', locale) },
+];
+---
+
+<Layout title={t('meta.services.title', locale)} description={t('meta.services.description', locale)} locale={locale}>
+  <!-- Hero -->
+  <section class="pt-32 pb-20 px-6 bg-pink/30">
+    <div class="max-w-4xl mx-auto">
+      <span class="text-xs font-medium uppercase tracking-[0.2em] text-ink-faint mb-4 block">{t('services.eyebrow', locale)}</span>
+      <h1 class="font-display text-4xl md:text-5xl font-extrabold tracking-tight text-ink leading-tight mb-6">
+        {t('services.heading1', locale)} <span class="text-blue">{t('services.heading2', locale)}</span>
+      </h1>
+      <p class="text-ink-muted text-lg max-w-2xl leading-relaxed">
+        {t('services.lead', locale)}
+      </p>
+    </div>
+  </section>
+
+  <!-- Services -->
+  <section class="py-24 px-6">
+    <div class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 gap-6">
+      {services.map((service) => (
+          <a href={localePath(`/services/${service.slug}`, locale)} id={service.slug} class={`scroll-mt-24 group block rounded-2xl bg-surface border border-border ${service.accentBorder} border-t-[3px] p-7 transition-all duration-300 hover:shadow-lg hover:shadow-ink/5 hover:-translate-y-1`}>
+            <div class={`w-12 h-12 ${service.iconContainer} flex items-center justify-center mb-5 ${service.iconColor} transition-transform duration-300 group-hover:scale-110`}>
+              <svg class="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" set:html={service.icon} />
+            </div>
+            <h2 class="font-display text-xl font-extrabold text-ink mb-2 group-hover:text-blue transition-colors">{localize(service.name, locale)}</h2>
+            <p class="text-ink-muted text-sm leading-relaxed mb-5">{localize(service.description, locale)}</p>
+            <div class="flex flex-wrap gap-2 mb-4">
+              {localize(service.features, locale).map((feature) => (
+                <span class="text-xs px-3 py-1.5 rounded-full font-medium bg-surface-alt text-ink-muted">
+                  {feature}
+                </span>
+              ))}
+            </div>
+            <span class="inline-flex items-center gap-1.5 text-sm font-medium text-blue opacity-0 group-hover:opacity-100 transition-opacity">
+              {t('cta.learnMore', locale)}
+              <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </span>
+          </a>
+      ))}
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="py-24 px-6 bg-surface-alt">
+    <div class="max-w-3xl mx-auto">
+      <h2 class="font-display text-3xl font-extrabold tracking-tight text-ink mb-10 text-center">{t('services.faq.heading', locale)}</h2>
+      <div class="flex flex-col gap-3">
+        {faqs.map((faq) => (
+          <details class="group bg-surface rounded-xl border border-border p-5 cursor-pointer">
+            <summary class="flex items-center justify-between font-display font-bold text-ink text-sm list-none">
+              {faq.q}
+              <svg class="w-4 h-4 text-ink-faint flex-shrink-0 ml-4 transition-transform duration-300 group-open:rotate-45" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12h14"/></svg>
+            </summary>
+            <p class="text-ink-muted leading-relaxed mt-3 text-sm">{faq.a}</p>
+          </details>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaSection locale={locale} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org", "@type": "FAQPage",
+    "mainEntity": faqs.map(f => ({ "@type": "Question", "name": f.q, "acceptedAnswer": { "@type": "Answer", "text": f.a } })),
+  })} />
+</Layout>

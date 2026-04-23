@@ -1,21 +1,33 @@
 ---
+import { LOCALES, LOCALE_SHORT, type Locale } from '../../i18n/config';
+import { alternateUrl, getLocaleFromUrl, localePath, stripLocale, t } from '../../i18n/utils';
+
+interface Props {
+  locale?: Locale;
+}
+
+const { locale = getLocaleFromUrl(Astro.url) } = Astro.props;
+
 const navItems = [
-  { label: 'Accueil', href: '/' },
-  { label: 'Services', href: '/services' },
-  { label: 'Réalisations', href: '/realisations' },
-  { label: 'À propos', href: '/a-propos' },
-  { label: 'Contact', href: '/contact' },
+  { key: 'nav.home', path: '/' },
+  { key: 'nav.services', path: '/services' },
+  { key: 'nav.portfolio', path: '/realisations' },
+  { key: 'nav.about', path: '/a-propos' },
+  { key: 'nav.contact', path: '/contact' },
 ];
+
 const currentPath = Astro.url.pathname;
-function isActive(href: string) {
-  if (href === '/') return currentPath === '/';
-  return currentPath.startsWith(href);
+const canonicalPath = stripLocale(currentPath);
+
+function isActive(canonical: string) {
+  if (canonical === '/') return canonicalPath === '/' || canonicalPath === '';
+  return canonicalPath.startsWith(canonical);
 }
 ---
 
 <header class="fixed top-0 inset-x-0 z-50 transition-all duration-500" id="site-header">
   <nav class="mx-auto max-w-7xl px-6 py-5 flex items-center justify-between">
-    <a href="/" class="flex items-center gap-3 group" aria-label="Studio Kutzu — Accueil">
+    <a href={localePath('/', locale)} class="flex items-center gap-3 group" aria-label={t('common.logoAlt', locale)}>
       <img src="/logo.svg" alt="" class="h-10 w-10 transition-transform duration-500 group-hover:scale-105" transition:name="logo" />
       <span class="text-lg font-bold tracking-tight text-ink hidden sm:block font-display">
         Studio Kutzu
@@ -23,30 +35,56 @@ function isActive(href: string) {
     </a>
 
     <ul class="hidden md:flex items-center gap-8">
-      {navItems.map((item) => (
-        <li>
-          <a
-            href={item.href}
-            class:list={[
-              'text-sm font-medium transition-colors duration-300 hover:text-blue relative',
-              isActive(item.href) ? 'text-blue' : 'text-ink-muted',
-            ]}
-          >
-            {item.label}
-            {isActive(item.href) && (
-              <span class="absolute -bottom-1 inset-x-0 h-0.5 bg-blue rounded-full" />
-            )}
-          </a>
-        </li>
-      ))}
+      {navItems.map((item) => {
+        const href = localePath(item.path, locale);
+        const active = isActive(item.path);
+        return (
+          <li>
+            <a
+              href={href}
+              class:list={[
+                'text-sm font-medium transition-colors duration-300 hover:text-blue relative',
+                active ? 'text-blue' : 'text-ink-muted',
+              ]}
+            >
+              {t(item.key, locale)}
+              {active && (
+                <span class="absolute -bottom-1 inset-x-0 h-0.5 bg-blue rounded-full" />
+              )}
+            </a>
+          </li>
+        );
+      })}
     </ul>
 
-    <a href="/contact" class="hidden md:inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue text-white text-sm font-medium transition-all duration-300 hover:bg-blue-dark hover:scale-105">
-      Parlons-en
-    </a>
+    <div class="hidden md:flex items-center gap-4">
+      <!-- Language switcher (desktop) -->
+      <div class="flex items-center gap-1 text-xs font-medium" role="group" aria-label={t('common.switchLanguage', locale)}>
+        {LOCALES.map((loc, i) => (
+          <>
+            {i > 0 && <span class="text-ink-faint" aria-hidden="true">/</span>}
+            <a
+              href={alternateUrl(currentPath, loc)}
+              class:list={[
+                'transition-colors duration-300 px-1',
+                loc === locale ? 'text-blue font-semibold' : 'text-ink-muted hover:text-blue',
+              ]}
+              aria-current={loc === locale ? 'true' : undefined}
+              hreflang={loc}
+            >
+              {LOCALE_SHORT[loc]}
+            </a>
+          </>
+        ))}
+      </div>
+
+      <a href={localePath('/contact', locale)} class="inline-flex items-center gap-2 px-5 py-2.5 rounded-full bg-blue text-white text-sm font-medium transition-all duration-300 hover:bg-blue-dark hover:scale-105">
+        {t('cta.talk', locale)}
+      </a>
+    </div>
 
     <!-- Hamburger / Close button -->
-    <button class="md:hidden relative w-11 h-11 flex items-center justify-center" id="mobile-menu-btn" aria-label="Ouvrir le menu" aria-expanded="false">
+    <button class="md:hidden relative w-11 h-11 flex items-center justify-center" id="mobile-menu-btn" aria-label={t('common.openMenu', locale)} aria-expanded="false">
       <span class="w-6 h-0.5 bg-ink absolute transition-all duration-300 ease-out" id="bar1" style="transform: translateY(-4px);"></span>
       <span class="w-6 h-0.5 bg-ink absolute transition-all duration-300 ease-out" id="bar2"></span>
       <span class="w-4 h-0.5 bg-ink absolute transition-all duration-300 ease-out ml-auto" id="bar3" style="transform: translateY(4px);"></span>
@@ -59,32 +97,57 @@ function isActive(href: string) {
     id="mobile-menu"
     role="dialog"
     aria-modal="true"
-    aria-label="Menu de navigation"
+    aria-label={t('common.menuDialog', locale)}
   >
     <!-- Logo white -->
     <img src="/logo-white.svg" alt="" class="absolute top-6 left-6 w-10 h-10" />
 
     <!-- Close button -->
-    <button class="absolute top-6 right-6 w-11 h-11 flex items-center justify-center" id="mobile-menu-close" aria-label="Fermer le menu">
+    <button class="absolute top-6 right-6 w-11 h-11 flex items-center justify-center" id="mobile-menu-close" aria-label={t('common.closeMenu', locale)}>
       <svg class="w-6 h-6 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6L6 18M6 6l12 12"/></svg>
     </button>
 
     {navItems.map((item, i) => (
       <a
-        href={item.href}
+        href={localePath(item.path, locale)}
         class="text-2xl font-bold text-white/90 hover:text-white transition-colors font-display mobile-menu-link"
         style={`opacity: 0; transform: translateY(20px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${i * 0.06}s;`}
       >
-        {item.label}
+        {t(item.key, locale)}
       </a>
     ))}
     <a
-      href="/contact"
+      href={localePath('/contact', locale)}
       class="mt-4 px-8 py-3 rounded-full bg-white text-blue font-bold font-display mobile-menu-link"
       style={`opacity: 0; transform: translateY(20px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${navItems.length * 0.06}s;`}
     >
-      Parlons-en
+      {t('cta.talk', locale)}
     </a>
+
+    <!-- Language switcher (mobile, inside burger) -->
+    <div
+      class="flex items-center gap-3 mt-6 mobile-menu-link"
+      role="group"
+      aria-label={t('common.switchLanguage', locale)}
+      style={`opacity: 0; transform: translateY(20px); transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1) ${(navItems.length + 1) * 0.06}s;`}
+    >
+      {LOCALES.map((loc, i) => (
+        <>
+          {i > 0 && <span class="text-white/40 text-sm" aria-hidden="true">·</span>}
+          <a
+            href={alternateUrl(currentPath, loc)}
+            class:list={[
+              'text-sm font-display tracking-wider transition-colors',
+              loc === locale ? 'text-white font-bold underline underline-offset-4' : 'text-white/60 hover:text-white',
+            ]}
+            aria-current={loc === locale ? 'true' : undefined}
+            hreflang={loc}
+          >
+            {LOCALE_SHORT[loc]}
+          </a>
+        </>
+      ))}
+    </div>
   </div>
 </header>
 
@@ -123,6 +186,9 @@ function isActive(href: string) {
     }, { passive: true });
     onScroll();
 
+    const openLabel = btn?.getAttribute('aria-label') ?? '';
+    const closeLabel = closeBtn?.getAttribute('aria-label') ?? '';
+
     function openMenu() {
       isOpen = true;
       if (!menu) return;
@@ -138,7 +204,7 @@ function isActive(href: string) {
       if (bar2) bar2.style.opacity = '0';
       if (bar3) { bar3.style.transform = 'rotate(-45deg)'; bar3.style.width = '24px'; }
       btn?.setAttribute('aria-expanded', 'true');
-      btn?.setAttribute('aria-label', 'Fermer le menu');
+      if (closeLabel) btn?.setAttribute('aria-label', closeLabel);
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
     }
@@ -158,7 +224,7 @@ function isActive(href: string) {
       if (bar2) bar2.style.opacity = '1';
       if (bar3) { bar3.style.transform = 'translateY(4px)'; bar3.style.width = '16px'; }
       btn?.setAttribute('aria-expanded', 'false');
-      btn?.setAttribute('aria-label', 'Ouvrir le menu');
+      if (openLabel) btn?.setAttribute('aria-label', openLabel);
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
     }

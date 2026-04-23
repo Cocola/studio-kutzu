@@ -1,0 +1,301 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import { siteConfig } from '../../data/site';
+import { type Locale } from '../../i18n/config';
+import { localize, t } from '../../i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const [emailLocal, emailDomain] = siteConfig.email.split('@');
+
+const phoneDisplay = siteConfig.phone;
+const phoneMid = Math.ceil(phoneDisplay.length / 2);
+const phoneP1 = phoneDisplay.slice(0, phoneMid);
+const phoneP2 = phoneDisplay.slice(phoneMid);
+const telDigits = phoneDisplay.replace(/\s+/g, '').replace(/^0/, '33');
+const telT1 = telDigits.slice(0, Math.ceil(telDigits.length / 2));
+const telT2 = telDigits.slice(Math.ceil(telDigits.length / 2));
+
+const subjects = [
+  { value: 'site-web', labelKey: 'contact.form.subject.web' },
+  { value: 'identite-visuelle', labelKey: 'contact.form.subject.identity' },
+  { value: 'reseaux-sociaux', labelKey: 'contact.form.subject.social' },
+  { value: 'strategie', labelKey: 'contact.form.subject.strategy' },
+  { value: 'autre', labelKey: 'contact.form.subject.other' },
+];
+---
+
+<Layout
+  title={t('meta.contact.title', locale)}
+  description={t('meta.contact.description', locale)}
+  locale={locale}
+>
+  <section class="pt-32 pb-32 px-6">
+    <div class="max-w-6xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_1.2fr] gap-16">
+      <!-- Left: info -->
+      <div>
+        <span class="text-xs font-medium uppercase tracking-[0.2em] text-ink-faint mb-4 block">{t('contact.eyebrow', locale)}</span>
+        <h1 class="font-display text-4xl md:text-5xl font-extrabold tracking-tight text-ink leading-tight mb-6">
+          {t('contact.heading1', locale)}<br/>{t('contact.heading2', locale)} <span class="text-blue">{t('contact.heading3', locale)}</span>
+        </h1>
+        <p class="text-ink-muted text-lg leading-relaxed mb-10">
+          {t('contact.intro', locale)}
+        </p>
+
+        <div class="flex flex-col gap-6">
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-pink flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-ink">{t('contact.info.email', locale)}</p>
+              <div class="flex items-center gap-3 flex-wrap" data-email-widget data-u={emailLocal} data-d={emailDomain}>
+                <button type="button" data-action="open" class="text-sm text-blue hover:underline cursor-pointer">{t('contact.info.emailCta', locale)}</button>
+                <span class="text-ink-faint" aria-hidden="true">·</span>
+                <button type="button" data-action="copy" class="text-sm text-ink-muted hover:text-blue cursor-pointer">{t('contact.info.emailCopy', locale)}</button>
+                <span class="hidden text-xs text-blue" data-copied-label>{t('contact.info.emailCopied', locale)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-pink flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-ink">{t('contact.info.phone', locale)}</p>
+              <div class="flex items-center gap-3 flex-wrap" data-phone-widget data-p1={phoneP1} data-p2={phoneP2} data-t1={telT1} data-t2={telT2}>
+                <button type="button" data-action="call" class="text-sm text-blue hover:underline cursor-pointer">{t('contact.info.phoneCta', locale)}</button>
+                <span class="text-ink-faint" aria-hidden="true">·</span>
+                <button type="button" data-action="copy" class="text-sm text-ink-muted hover:text-blue cursor-pointer">{t('contact.info.emailCopy', locale)}</button>
+                <span class="hidden text-xs text-blue" data-copied-label>{t('contact.info.emailCopied', locale)}</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-pink flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-ink">{t('contact.info.location', locale)}</p>
+              <p class="text-sm text-ink-muted">{localize(siteConfig.city, locale)}, {siteConfig.postalCode}<br/>{localize(siteConfig.region, locale)}, {t('contact.address.country', locale)}</p>
+            </div>
+          </div>
+
+          <div class="flex items-start gap-4">
+            <div class="w-10 h-10 rounded-lg bg-pink flex items-center justify-center flex-shrink-0">
+              <svg class="w-5 h-5 text-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"/><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg>
+            </div>
+            <div>
+              <p class="text-sm font-medium text-ink">{t('contact.info.social', locale)}</p>
+              <div class="flex gap-3 mt-1">
+                <a href={siteConfig.instagram} target="_blank" rel="noopener noreferrer" class="text-sm text-blue hover:underline">Instagram</a>
+                <a href={siteConfig.linkedin} target="_blank" rel="noopener noreferrer" class="text-sm text-blue hover:underline">LinkedIn</a>
+                <a href={siteConfig.facebook} target="_blank" rel="noopener noreferrer" class="text-sm text-blue hover:underline">Facebook</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right: form -->
+      <div class="bg-surface rounded-2xl border border-border p-8 md:p-10 flex flex-col">
+        <div id="form-wrapper" class="flex flex-col">
+        <h2 class="font-display text-xl font-bold text-ink mb-6">{t('contact.form.heading', locale)}</h2>
+        <form class="flex flex-col gap-5" id="contact-form" data-sending-label={t('cta.sending', locale)} data-endpoint="https://api.web3forms.com/submit">
+          <input type="hidden" name="access_key" value={siteConfig.web3formsKey} />
+          <input type="hidden" name="from_name" value="Studio Kutzu — Formulaire de contact" />
+          <input type="hidden" name="subject" value="Nouveau message via studiokutzu.com" />
+          <input type="hidden" name="locale" value={locale} />
+          <input type="text" name="botcheck" tabindex="-1" autocomplete="off" class="absolute left-[-9999px] w-px h-px opacity-0" aria-hidden="true" />
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-5">
+            <div>
+              <label for="name" class="text-sm font-medium text-ink mb-1.5 block">{t('contact.form.name', locale)} *</label>
+              <input
+                type="text"
+                id="name"
+                name="name"
+                required
+                class="w-full px-4 py-3 rounded-xl bg-bg border border-border text-ink text-sm placeholder-ink-faint focus:outline-none focus:border-blue focus:ring-1 focus:ring-blue transition-colors"
+                placeholder={t('contact.form.namePlaceholder', locale)}
+              />
+            </div>
+            <div>
+              <label for="email" class="text-sm font-medium text-ink mb-1.5 block">{t('contact.form.email', locale)} *</label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                required
+                class="w-full px-4 py-3 rounded-xl bg-bg border border-border text-ink text-sm placeholder-ink-faint focus:outline-none focus:border-blue focus:ring-1 focus:ring-blue transition-colors"
+                placeholder={t('contact.form.emailPlaceholder', locale)}
+              />
+            </div>
+          </div>
+          <div>
+            <label for="company" class="text-sm font-medium text-ink mb-1.5 block">{t('contact.form.company', locale)}</label>
+            <input
+              type="text"
+              id="company"
+              name="company"
+              class="w-full px-4 py-3 rounded-xl bg-bg border border-border text-ink text-sm placeholder-ink-faint focus:outline-none focus:border-blue focus:ring-1 focus:ring-blue transition-colors"
+              placeholder={t('contact.form.companyPlaceholder', locale)}
+            />
+          </div>
+          <div>
+            <label for="subject" class="text-sm font-medium text-ink mb-1.5 block">{t('contact.form.subject', locale)} *</label>
+            <select
+              id="subject"
+              name="topic"
+              required
+              class="w-full px-4 py-3 rounded-xl bg-bg border border-border text-ink text-sm focus:outline-none focus:border-blue focus:ring-1 focus:ring-blue transition-colors"
+            >
+              <option value="">{t('contact.form.subjectDefault', locale)}</option>
+              {subjects.map((s) => (
+                <option value={s.value}>{t(s.labelKey, locale)}</option>
+              ))}
+            </select>
+          </div>
+          <div>
+            <label for="message" class="text-sm font-medium text-ink mb-1.5 block">{t('contact.form.message', locale)} *</label>
+            <textarea
+              id="message"
+              name="message"
+              required
+              rows="5"
+              class="w-full px-4 py-3 rounded-xl bg-bg border border-border text-ink text-sm placeholder-ink-faint focus:outline-none focus:border-blue focus:ring-1 focus:ring-blue transition-colors resize-none"
+              placeholder={t('contact.form.messagePlaceholder', locale)}
+            ></textarea>
+          </div>
+          <button
+            type="submit"
+            class="w-full sm:w-auto inline-flex items-center justify-center gap-3 px-8 py-4 bg-blue text-white rounded-full font-bold font-display transition-all duration-300 hover:bg-blue-dark hover:shadow-lg hover:shadow-blue/20 hover:-translate-y-0.5"
+          >
+            {t('cta.send', locale)}
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M22 2L11 13"/><path d="M22 2l-7 20-4-9-9-4 20-7z"/></svg>
+          </button>
+        </form>
+
+        <!-- Error state -->
+        <div id="form-error" class="hidden mt-4 p-4 rounded-xl bg-red-50 border border-red-200" role="alert" aria-live="assertive">
+          <p class="text-sm text-red-700 font-medium">{t('contact.form.errorMsg', locale)}</p>
+        </div>
+        </div>
+
+        <!-- Success state (hidden by default) -->
+        <div id="form-success" class="hidden flex-1 flex flex-col items-center justify-center text-center min-h-[520px]" role="status" aria-live="polite">
+          <div class="w-16 h-16 rounded-full bg-pink flex items-center justify-center mb-4">
+            <svg class="w-8 h-8 text-blue" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 6L9 17l-5-5"/></svg>
+          </div>
+          <h3 class="font-display text-xl font-bold text-ink mb-2">{t('contact.form.successTitle', locale)}</h3>
+          <p class="text-sm text-ink-muted max-w-sm">{t('contact.form.successMsg', locale)}</p>
+        </div>
+      </div>
+
+      <script>
+        const initContactPage = () => {
+        const form = document.getElementById('contact-form') as HTMLFormElement | null;
+        if (!form) return;
+        const wrapper = document.getElementById('form-wrapper');
+        const success = document.getElementById('form-success');
+        const error = document.getElementById('form-error');
+        const sendingLabel = form?.dataset.sendingLabel ?? 'Sending...';
+        const endpoint = form?.dataset.endpoint ?? '';
+
+        form?.addEventListener('submit', async (e) => {
+          e.preventDefault();
+          error?.classList.add('hidden');
+          const btn = form.querySelector('button[type="submit"]') as HTMLButtonElement;
+          const originalText = btn.innerHTML;
+          btn.disabled = true;
+          btn.innerHTML = `<span class="inline-block w-4 h-4 border-2 border-white border-t-transparent rounded-full animate-spin"></span> ${sendingLabel}`;
+
+          try {
+            const data = new FormData(form);
+            const res = await fetch(endpoint, {
+              method: 'POST',
+              body: data,
+              headers: { 'Accept': 'application/json' },
+            });
+            if (res.ok) {
+              wrapper?.classList.add('hidden');
+              success?.classList.remove('hidden');
+              success?.classList.add('flex');
+            } else {
+              throw new Error('fail');
+            }
+          } catch {
+            error?.classList.remove('hidden');
+            btn.disabled = false;
+            btn.innerHTML = originalText;
+          }
+        });
+
+        const copyToClipboard = async (value: string) => {
+          try {
+            await navigator.clipboard.writeText(value);
+          } catch {
+            const tmp = document.createElement('input');
+            tmp.value = value;
+            tmp.setAttribute('readonly', '');
+            tmp.style.position = 'absolute';
+            tmp.style.left = '-9999px';
+            document.body.appendChild(tmp);
+            tmp.select();
+            try { document.execCommand('copy'); } catch {}
+            document.body.removeChild(tmp);
+          }
+        };
+
+        const flashCopied = (widget: HTMLElement) => {
+          const copied = widget.querySelector<HTMLElement>('[data-copied-label]');
+          copied?.classList.remove('hidden');
+          window.setTimeout(() => copied?.classList.add('hidden'), 2000);
+        };
+
+        document.querySelectorAll<HTMLElement>('[data-email-widget]').forEach((widget) => {
+          const u = widget.dataset.u ?? '';
+          const d = widget.dataset.d ?? '';
+          if (!u || !d) return;
+          const email = `${u}@${d}`;
+
+          widget.querySelector<HTMLButtonElement>('[data-action="open"]')?.addEventListener('click', () => {
+            window.location.href = `mailto:${email}`;
+          });
+
+          widget.querySelector<HTMLButtonElement>('[data-action="copy"]')?.addEventListener('click', async () => {
+            await copyToClipboard(email);
+            flashCopied(widget);
+          });
+        });
+
+        document.querySelectorAll<HTMLElement>('[data-phone-widget]').forEach((widget) => {
+          const p1 = widget.dataset.p1 ?? '';
+          const p2 = widget.dataset.p2 ?? '';
+          const t1 = widget.dataset.t1 ?? '';
+          const t2 = widget.dataset.t2 ?? '';
+          if (!p1 || !t1) return;
+          const display = `${p1}${p2}`;
+          const telHref = `tel:+${t1}${t2}`;
+
+          widget.querySelector<HTMLButtonElement>('[data-action="call"]')?.addEventListener('click', () => {
+            window.location.href = telHref;
+          });
+
+          widget.querySelector<HTMLButtonElement>('[data-action="copy"]')?.addEventListener('click', async () => {
+            await copyToClipboard(display);
+            flashCopied(widget);
+          });
+        });
+        };
+
+        document.addEventListener('astro:page-load', initContactPage);
+      </script>
+    </div>
+  </section>
+</Layout>

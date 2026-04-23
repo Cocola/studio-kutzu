@@ -3,42 +3,57 @@ import '../styles/global.css';
 import { ClientRouter } from 'astro:transitions';
 import Header from '../components/layout/Header.astro';
 import Footer from '../components/layout/Footer.astro';
+import { DEFAULT_LOCALE, HTML_LANG, LOCALES, OG_LOCALE, type Locale } from '../i18n/config';
+import { getLocaleFromUrl, localePath, stripLocale, t } from '../i18n/utils';
 
 interface Props {
   title: string;
   description?: string;
+  locale?: Locale;
 }
 
-const {
-  title,
-  description = "Studio Kutzu — Communication digitale au Pays Basque. Identité visuelle, sites web, réseaux sociaux. Cambo-les-Bains.",
-} = Astro.props;
+const detectedLocale = getLocaleFromUrl(Astro.url);
+const { title, description, locale = detectedLocale } = Astro.props;
 
-const canonicalURL = new URL(Astro.url.pathname, Astro.site);
+const resolvedDescription = description ?? t('meta.home.description', locale);
+
+const canonicalPath = Astro.url.pathname;
+const canonicalURL = new URL(canonicalPath, Astro.site);
+
+const cleanPath = stripLocale(canonicalPath);
+const alternates = LOCALES.map((loc) => ({
+  hreflang: HTML_LANG[loc],
+  href: new URL(localePath(cleanPath, loc), Astro.site).toString(),
+}));
+const xDefaultHref = new URL(localePath(cleanPath, DEFAULT_LOCALE), Astro.site).toString();
 ---
 
 <!doctype html>
-<html lang="fr" class="lenis">
+<html lang={HTML_LANG[locale]} class="lenis">
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
     <meta name="generator" content={Astro.generator} />
 
     <title>{title}</title>
-    <meta name="description" content={description} />
+    <meta name="description" content={resolvedDescription} />
     <meta name="robots" content="index, follow" />
     <link rel="canonical" href={canonicalURL} />
+    {alternates.map((a) => (
+      <link rel="alternate" hreflang={a.hreflang} href={a.href} />
+    ))}
+    <link rel="alternate" hreflang="x-default" href={xDefaultHref} />
 
     <meta property="og:type" content="website" />
     <meta property="og:url" content={canonicalURL} />
     <meta property="og:title" content={title} />
-    <meta property="og:description" content={description} />
-    <meta property="og:locale" content="fr_FR" />
+    <meta property="og:description" content={resolvedDescription} />
+    <meta property="og:locale" content={OG_LOCALE[locale]} />
     <meta property="og:site_name" content="Studio Kutzu" />
 
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content={title} />
-    <meta name="twitter:description" content={description} />
+    <meta name="twitter:description" content={resolvedDescription} />
     <meta property="og:image" content="https://studiokutzu.com/og-image.jpg" />
     <meta name="twitter:image" content="https://studiokutzu.com/og-image.jpg" />
 
@@ -57,7 +72,7 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     </style>
   </head>
   <body class="overflow-x-hidden">
-    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[99999] focus:px-4 focus:py-2 focus:bg-blue focus:text-white focus:rounded-lg focus:text-sm focus:font-medium">Aller au contenu</a>
+    <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[99999] focus:px-4 focus:py-2 focus:bg-blue focus:text-white focus:rounded-lg focus:text-sm focus:font-medium">{t('common.skipToContent', locale)}</a>
 
     <!-- ── Page loader (first visit only) ── -->
     <div id="page-loader" class="fixed inset-0 z-[9999] flex items-center justify-center" style="background-color: #273CC6;">
@@ -75,11 +90,11 @@ const canonicalURL = new URL(Astro.url.pathname, Astro.site);
     </div>
 
     <div class="page-content">
-      <Header />
+      <Header locale={locale} />
       <main id="main">
         <slot />
       </main>
-      <Footer />
+      <Footer locale={locale} />
     </div>
 
     <script>

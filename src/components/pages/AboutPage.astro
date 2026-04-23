@@ -1,0 +1,123 @@
+---
+import Layout from '../../layouts/Layout.astro';
+import CtaSection from '../sections/CtaSection.astro';
+import { siteConfig } from '../../data/site';
+import { type Locale } from '../../i18n/config';
+import { localize, t } from '../../i18n/utils';
+
+interface Props {
+  locale: Locale;
+}
+
+const { locale } = Astro.props;
+
+const promises = [
+  t('about.promise.1', locale),
+  t('about.promise.2', locale),
+  t('about.promise.3', locale),
+  t('about.promise.4', locale),
+];
+
+const expertiseItems = [
+  t('about.expertise.1', locale),
+  t('about.expertise.2', locale),
+  t('about.expertise.3', locale),
+  t('about.expertise.4', locale),
+];
+
+const values = [
+  { titleKey: 'about.values.v1.title', textKey: 'about.values.v1.text', border: 'border-blue' },
+  { titleKey: 'about.values.v2.title', textKey: 'about.values.v2.text', border: 'border-gold' },
+  { titleKey: 'about.values.v3.title', textKey: 'about.values.v3.text', border: 'border-pink-deep' },
+];
+---
+
+<Layout title={t('meta.about.title', locale)} description={t('meta.about.description', locale)} locale={locale}>
+  <!-- Hero -->
+  <section class="pt-32 pb-20 px-6 bg-pink/30">
+    <div class="max-w-4xl mx-auto">
+      <span class="text-xs font-medium uppercase tracking-[0.2em] text-ink-faint mb-4 block">{t('about.eyebrow', locale)}</span>
+      <h1 class="font-display text-4xl md:text-5xl font-extrabold tracking-tight text-ink leading-tight mb-6">
+        Maider Gaicotchea
+      </h1>
+      <p class="text-xl text-ink-muted leading-relaxed max-w-2xl">
+        {t('about.hero.intro', locale)} <strong class="text-ink">{siteConfig.experience} {t('about.hero.experience', locale)}</strong> {t('about.hero.experienceRest', locale)}
+      </p>
+    </div>
+  </section>
+
+  <!-- Story -->
+  <section class="py-24 px-6">
+    <div class="max-w-4xl mx-auto grid grid-cols-1 lg:grid-cols-[1fr_0.8fr] gap-16 items-start">
+      <div>
+        <blockquote class="text-xl font-display font-bold text-ink leading-snug mb-8 border-l-2 border-gold pl-5">
+          {localize(siteConfig.tagline, locale)}
+        </blockquote>
+        <div class="flex flex-col gap-5 text-ink-muted leading-relaxed">
+          <p>
+            {t('about.story.p1.pre', locale)} <strong class="text-ink">{t('about.story.p1.strong1', locale)}</strong> {t('about.story.p1.mid', locale)} <strong class="text-ink">{t('about.story.p1.strong2', locale)}</strong>{t('about.story.p1.post', locale)}
+          </p>
+          <p>
+            {t('about.story.p2', locale)}
+          </p>
+          <p>
+            {t('about.story.p3', locale)}
+          </p>
+        </div>
+
+        <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
+          {promises.map((promise) => (
+            <div class="flex items-center gap-3 p-4 rounded-xl bg-surface border border-border">
+              <div class="w-2 h-2 rounded-full bg-gold flex-shrink-0"></div>
+              <p class="text-sm font-medium text-ink">{promise}</p>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div class="rounded-2xl overflow-hidden aspect-[3/4]">
+        <img src="/maider.jpg" alt={t('common.maiderAlt', locale)} width="600" height="800" class="w-full h-full object-cover" loading="lazy" decoding="async" />
+      </div>
+    </div>
+  </section>
+
+  <!-- Values -->
+  <section class="py-24 px-6 bg-surface-alt">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="font-display text-3xl font-extrabold text-ink mb-12">{t('about.values.heading', locale)}</h2>
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+        {values.map((value) => (
+          <div class={`pt-6 border-t-2 ${value.border}`}>
+            <h3 class="font-display text-lg font-bold text-ink mb-3">{t(value.titleKey, locale)}</h3>
+            <p class="text-sm text-ink-muted leading-relaxed">
+              {t(value.textKey, locale)}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Expertise -->
+  <section class="py-24 px-6">
+    <div class="max-w-4xl mx-auto">
+      <h2 class="font-display text-3xl font-extrabold text-ink mb-8">{t('about.expertise.heading', locale)}</h2>
+      <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+        {expertiseItems.map((item) => (
+          <div class="flex items-start gap-3 p-5 rounded-xl bg-surface border border-border">
+            <div class="w-2 h-2 rounded-full mt-1.5 flex-shrink-0 bg-blue"></div>
+            <p class="text-sm text-ink leading-relaxed">{item}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <CtaSection locale={locale} heading={t('about.cta.heading', locale)} text={t('about.cta.text', locale)} buttonLabel={t('cta.contactMe', locale)} />
+
+  <script type="application/ld+json" set:html={JSON.stringify({
+    "@context": "https://schema.org", "@type": "Person",
+    "name": "Maider Gaicotchea", "jobTitle": localize(siteConfig.founderTitle, locale),
+    "worksFor": { "@type": "Organization", "name": "Studio Kutzu" },
+    "address": { "@type": "PostalAddress", "addressLocality": "Cambo-les-Bains", "postalCode": "64250", "addressCountry": "FR" },
+  })} />
+</Layout>
