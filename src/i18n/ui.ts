@@ -174,7 +174,7 @@ export const ui: Record<Locale, Record<string, string>> = {
 
     // ─── Meta (titles & descriptions) ───
     'meta.home.title': 'Studio Kutzu | Communication Digitale au Pays Basque',
-    'meta.home.description': 'Studio Kutzu — Communication digitale au Pays Basque. Identité visuelle, sites web, réseaux sociaux. Cambo-les-Bains.',
+    'meta.home.description': "Maider Gaicotchea, 18 ans d'expérience. Sites web, identité visuelle, réseaux sociaux pour les professionnels du Pays Basque. Basée à Cambo-les-Bains.",
     'meta.about.title': 'À propos | Studio Kutzu — Maider Gaicotchea',
     'meta.about.description': 'Maider Gaicotchea, fondatrice de Studio Kutzu. Communication digitale au Pays Basque depuis 2022.',
     'meta.services.title': 'Services | Studio Kutzu — Communication Digitale au Pays Basque',
@@ -360,7 +360,7 @@ export const ui: Record<Locale, Record<string, string>> = {
 
     // ─── Meta ───
     'meta.home.title': 'Studio Kutzu | Komunikazio Digitala Euskal Herrian',
-    'meta.home.description': 'Studio Kutzu — Komunikazio digitala Euskal Herrian. Nortasun bisuala, webguneak, sare sozialak. Kanbo.',
+    'meta.home.description': 'Maider Gaicotchea, 18 urteren esperientzia. Webguneak, nortasun bisuala eta sare sozialak Euskal Herriko profesionalentzat. Kanbon.',
     'meta.about.title': 'Nitaz | Studio Kutzu — Maider Gaicotchea',
     'meta.about.description': 'Maider Gaicotchea, Studio Kutzu-ren sortzailea. Komunikazio digitala Euskal Herrian 2022tik.',
     'meta.services.title': 'Zerbitzuak | Studio Kutzu — Komunikazio Digitala Euskal Herrian',
