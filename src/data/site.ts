@@ -197,11 +197,30 @@ export interface Project {
   image: {
     desktop: string;
     mobile: string;
+    position?: string;
   };
   gallery?: string[];
 }
 
 export const portfolio: Project[] = [
+  {
+    client: 'DDEC 64',
+    slug: 'ddec-64',
+    description: {
+      fr: 'La DDEC 64 avait besoin d’un site plus actuel, plus clair et surtout davantage tourné vers les futurs enseignants. L’objectif était de faire du site une véritable porte d’entrée vers l’Enseignement catholique dans les Pyrénées-Atlantiques, en facilitant l’accès aux informations et aux différentes étapes pour devenir enseignant.',
+      eu: 'DDEC 64 erakundeak webgune modernoago eta argiago bat behar zuen, bereziki etorkizuneko irakasleei zuzendua. Helburua zen webgunea Pirinio Atlantikoetako irakaskuntza katolikora sartzeko benetako ate bihurtzea, informazioa eta irakasle izateko urratsak errazago eskuratzeko.',
+    },
+    services: {
+      fr: ['Refonte de site web'],
+      eu: ['Webgunearen berritzea'],
+    },
+    serviceTags: ['sites-web'],
+    location: { fr: 'Pyrénées-Atlantiques', eu: 'Pirinio Atlantikoak' },
+    website: 'www.ddec64.net',
+    year: 2026,
+    featured: true,
+    image: { desktop: '/portfolio/ddec-64.png', mobile: '/portfolio/ddec-64.png', position: 'center 80%' },
+  },
   {
     client: 'Musée Arnaga',
     slug: 'musee-arnaga',

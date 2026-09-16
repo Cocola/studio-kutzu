@@ -87,6 +87,7 @@ const serviceFeatures = localize(service.features, locale);
                     src={project.image.desktop}
                     alt={`${project.client} — ${projServices.join(', ')}`}
                     class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.05]"
+                    style={{ objectPosition: project.image.position }}
                     loading="lazy"
                   />
                 </div>

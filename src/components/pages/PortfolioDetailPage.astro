@@ -44,6 +44,7 @@ const projectLocation = localize(project.location, locale);
           src={project.image.desktop}
           alt={`${project.client} — ${projectServices.join(', ')}`}
           class="w-full aspect-[16/10] object-cover object-center"
+          style={{ objectPosition: project.image.position }}
           loading="eager"
         />
       </div>

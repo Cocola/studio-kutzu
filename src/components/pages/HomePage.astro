@@ -78,6 +78,7 @@ const { locale } = Astro.props;
                   width="640"
                   height="480"
                   class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.05]"
+                  style={{ objectPosition: project.image.position }}
                   loading="lazy"
                   decoding="async"
                 />
