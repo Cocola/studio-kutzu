@@ -1,0 +1,28 @@
+src/data/site.ts
+  s_9bfd9914d49436::t_8fc787f21e31c3 206-221,223
+  s_9bfd9914d49436::t_3ff2c2dba2a071 200,222
+src/components/pages/HomePage.astro
+  s_9bfd9914d49436::t_131ab68b4c1b7d 81
+src/components/pages/PortfolioDetailPage.astro
+  s_9bfd9914d49436::t_6a17c4aaf838b5 47
+src/components/pages/PortfolioListPage.astro
+  s_9bfd9914d49436::t_40dc1923d67538 40,44-45,82
+src/components/pages/ServiceDetailPage.astro
+  s_9bfd9914d49436::t_0cc3d9ad464f9c 90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "26a314f2ad77c93655ec0078d4e97796b736d22e",
+  "prompts": {},
+  "sessions": {
+    "s_9bfd9914d49436": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0aa49-94c7-76f2-8817-ae1842830b70",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Nicolas Fiascaro <n.fiascaro@gmail.com>"
+    }
+  }
+}
