@@ -3,9 +3,9 @@
   "trailingSlash": true,
   "redirects": [
     {
-      "source": "/:path*",
+      "source": "/:path(.*)",
       "has": [{ "type": "host", "value": "www.studiokutzu.com" }],
-      "destination": "https://studiokutzu.com/:path*",
+      "destination": "https://studiokutzu.com/:path",
       "permanent": true
     }
   ]

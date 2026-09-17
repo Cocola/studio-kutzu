@@ -65,3 +65,16 @@ Synthèse durable : [seo-performance.json](./seo-performance.json). Rapports com
 - Soumission du sitemap canonique et inspection des pages prioritaires dans Search Console après publication.
 - Indexation, trafic et demandes qualifiées à J+30/J+60/J+90.
 - Aucun envoi réel du formulaire ni modification d’une fiche Google Business Profile pendant cette recette.
+
+## Correction du routage `www` après publication
+
+Le contrôle HTTP du premier déploiement a révélé que `/:path*` ne couvrait ni `/` ni les pages terminées par `/`. Le compilateur officiel inclus dans Vercel CLI 59.20.0 reproduit ce défaut. La règle utilise désormais `/:path(.*)` et la destination `https://studiokutzu.com/:path` : sa regex compilée `^(?:/(.*))$` conserve le chemin complet, y compris le slash terminal et la racine vide. La condition reste limitée à `www.studiokutzu.com` ; aucun middleware ou réglage de domaine n’a été ajouté.
+
+Régression reproductible, sans dépendance de production supplémentaire :
+
+```sh
+# Chemin vers @vercel/routing-utils ou son module dans la CLI Vercel installée.
+VERCEL_ROUTING_UTILS_MODULE=/chemin/vers/module-du-compilateur.js node scripts/test-vercel-redirects.mjs
+```
+
+Le test utilise le véritable compilateur pour vérifier les chemins du sitemap avec/sans slash, la racine et les fichiers. Il reproduit également l’échec de l’ancienne règle. La conservation des paramètres par le CDN et les réponses HTTP finales restent à confirmer par la matrice publique après publication de ce correctif. [Documentation officielle des redirections Vercel](https://vercel.com/docs/routing/redirects/configuration-redirects).
