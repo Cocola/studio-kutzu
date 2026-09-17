@@ -105,6 +105,14 @@ const subjects = [
 
       <!-- Right: form -->
       <div class="bg-surface rounded-2xl border border-border p-8 md:p-10 flex flex-col">
+        <noscript>
+          <style>#form-wrapper, [data-email-widget], [data-phone-widget] { display: none; }</style>
+          <div class="space-y-4">
+            <h2 class="font-display text-xl font-bold">{t('contact.form.heading', locale)}</h2>
+            <p><a class="text-blue underline underline-offset-4" href={`mailto:${siteConfig.email}`}>{siteConfig.email}</a></p>
+            <p><a class="text-blue underline underline-offset-4" href={`tel:+${telDigits}`}>{siteConfig.phone}</a></p>
+          </div>
+        </noscript>
         <div id="form-wrapper" class="flex flex-col">
         <h2 class="font-display text-xl font-bold text-ink mb-6">{t('contact.form.heading', locale)}</h2>
         <form class="flex flex-col gap-5" id="contact-form" data-sending-label={t('cta.sending', locale)} data-endpoint="https://api.web3forms.com/submit">
@@ -222,7 +230,8 @@ const subjects = [
               body: data,
               headers: { 'Accept': 'application/json' },
             });
-            if (res.ok) {
+            const result = await res.json();
+            if (res.ok && result.success === true) {
               wrapper?.classList.add('hidden');
               success?.classList.remove('hidden');
               success?.classList.add('flex');

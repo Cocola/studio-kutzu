@@ -1,0 +1,25 @@
+---
+import type { EditorialContent } from '../../data/seo';
+
+interface Props {
+  sections: EditorialContent['sections'];
+}
+
+const { sections } = Astro.props;
+---
+
+<div class="space-y-10">
+  {sections.map((section) => (
+    <section>
+      <h2 class="font-display text-2xl font-extrabold text-ink mb-4">{section.title}</h2>
+      {section.paragraphs?.map((paragraph) => (
+        <p class="text-ink-muted leading-relaxed mb-4">{paragraph}</p>
+      ))}
+      {section.items && (
+        <ul class="list-disc pl-5 space-y-2 text-ink-muted leading-relaxed marker:text-blue">
+          {section.items.map((item) => <li>{item}</li>)}
+        </ul>
+      )}
+    </section>
+  ))}
+</div>

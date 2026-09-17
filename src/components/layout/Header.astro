@@ -91,6 +91,18 @@ function isActive(canonical: string) {
     </button>
   </nav>
 
+  <noscript>
+    <style is:inline>
+      #mobile-menu-btn { display: none; }
+      #site-header { position: relative; }
+      main > section:first-child { padding-top: 2rem; }
+    </style>
+    <nav class="md:hidden flex flex-wrap justify-center gap-x-5 gap-y-3 px-6 pb-4 bg-bg" aria-label={t('common.menuDialog', locale)}>
+      {navItems.map((item) => <a href={localePath(item.path, locale)} class="text-sm font-medium text-blue">{t(item.key, locale)}</a>)}
+      {LOCALES.map((loc) => <a href={alternateUrl(currentPath, loc)} class="text-sm font-semibold" hreflang={loc}>{LOCALE_SHORT[loc]}</a>)}
+    </nav>
+  </noscript>
+
   <!-- Mobile menu -->
   <div
     class="md:hidden fixed inset-0 h-dvh w-screen z-[9999] flex flex-col items-center justify-center gap-8 bg-blue overflow-hidden overscroll-none touch-none opacity-0 pointer-events-none transition-opacity duration-400 ease-[cubic-bezier(0.16,1,0.3,1)]"
@@ -98,6 +110,7 @@ function isActive(canonical: string) {
     role="dialog"
     aria-modal="true"
     aria-label={t('common.menuDialog', locale)}
+    inert
   >
     <!-- Logo white -->
     <img src="/logo-white.svg" alt="" class="absolute top-6 left-6 w-10 h-10" />
@@ -192,6 +205,7 @@ function isActive(canonical: string) {
     function openMenu() {
       isOpen = true;
       if (!menu) return;
+      menu.inert = false;
       menu.classList.remove('opacity-0', 'pointer-events-none');
       menu.classList.add('opacity-100', 'pointer-events-auto');
       // Animate links in
@@ -207,11 +221,13 @@ function isActive(canonical: string) {
       if (closeLabel) btn?.setAttribute('aria-label', closeLabel);
       document.body.style.overflow = 'hidden';
       document.documentElement.style.overflow = 'hidden';
+      closeBtn?.focus();
     }
 
     function closeMenu() {
       isOpen = false;
       if (!menu) return;
+      menu.inert = true;
       // Reset links
       links.forEach((link) => {
         (link as HTMLElement).style.opacity = '0';
@@ -227,6 +243,7 @@ function isActive(canonical: string) {
       if (openLabel) btn?.setAttribute('aria-label', openLabel);
       document.body.style.overflow = '';
       document.documentElement.style.overflow = '';
+      btn?.focus();
     }
 
     btn?.addEventListener('click', () => isOpen ? closeMenu() : openMenu());

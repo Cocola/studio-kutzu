@@ -90,7 +90,7 @@ export const services: Service[] = [
     accentBorder: 'border-t-gold',
   },
   {
-    name: { fr: 'Identité visuelle & Print', eu: 'Nortasun bisuala eta inprimaketa' },
+    name: { fr: 'Identité visuelle', eu: 'Nortasun bisuala eta inprimaketa' },
     slug: 'identite-visuelle',
     shortDescription: {
       fr: 'Logos, chartes graphiques et supports imprimés.',
@@ -101,7 +101,7 @@ export const services: Service[] = [
       eu: 'Nortasun bisualaren sorkuntza edo berritzea — logotipoa, gidalerro grafikoa, moodboard-a — eta inprimatutako komunikazio-tresnen diseinua.',
     },
     features: {
-      fr: ['Création de logo', 'Charte graphique', 'Flyers & dépliants', 'Catalogues & brochures', 'Cartes de visite'],
+      fr: ['Création de logo', 'Moodboard', 'Charte graphique', 'Déclinaisons visuelles', 'Packaging'],
       eu: ['Logotipoaren sorkuntza', 'Gidalerro grafikoa', 'Flyer-ak eta tolesgarriak', 'Katalogoak eta liburuxkak', 'Bisita-txartelak'],
     },
     icon: '<path d="M12 19l7-7 3 3-7 7-3-3z"/><path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/><path d="M2 2l7.586 7.586"/><circle cx="11" cy="11" r="2"/>',
@@ -288,7 +288,7 @@ export const portfolio: Project[] = [
       fr: ['Identité visuelle', 'Création site web'],
       eu: ['Nortasun bisuala', 'Webgunearen sorkuntza'],
     },
-    serviceTags: ['identite-visuelle', 'sites-web'],
+    serviceTags: ['identite-visuelle', 'sites-web', 'editions-imprimees'],
     location: { fr: 'Espelette', eu: 'Ezpeleta' },
     website: 'www.elkarbat.eus',
     year: 2025,

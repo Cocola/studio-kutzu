@@ -18,7 +18,7 @@ const { title, description, locale = detectedLocale } = Astro.props;
 
 const resolvedDescription = description ?? t('meta.home.description', locale);
 
-const canonicalPath = Astro.url.pathname;
+const canonicalPath = localePath(Astro.url.pathname, locale);
 const canonicalURL = new URL(canonicalPath, Astro.site);
 
 const cleanPath = stripLocale(canonicalPath);
@@ -36,7 +36,7 @@ const jsonLd = {
   '@id': 'https://studiokutzu.com/#business',
   name: siteConfig.name,
   alternateName: 'Kutzu',
-  description: resolvedDescription,
+  description: t('meta.home.description', locale),
   url: 'https://studiokutzu.com/',
   telephone: phoneE164,
   email: siteConfig.email,
@@ -88,7 +88,7 @@ const jsonLd = {
 ---
 
 <!doctype html>
-<html lang={HTML_LANG[locale]} class="lenis">
+<html lang={HTML_LANG[locale]}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=5" />
@@ -135,29 +135,9 @@ const jsonLd = {
     <link rel="preload" href="/fonts/cabinet-grotesk-800.woff2" as="font" type="font/woff2" crossorigin />
     <link rel="preload" href="/fonts/satoshi-400.woff2" as="font" type="font/woff2" crossorigin />
 
-    <!-- Prevent FOUC: hide body until loader dismisses -->
-    <style is:inline>
-      .page-content { opacity: 0; }
-      .page-content.loaded { opacity: 1; }
-    </style>
   </head>
   <body class="overflow-x-hidden">
     <a href="#main" class="sr-only focus:not-sr-only focus:fixed focus:top-4 focus:left-4 focus:z-[99999] focus:px-4 focus:py-2 focus:bg-blue focus:text-white focus:rounded-lg focus:text-sm focus:font-medium">{t('common.skipToContent', locale)}</a>
-
-    <!-- ── Page loader (first visit only) ── -->
-    <div id="page-loader" class="fixed inset-0 z-[9999] flex items-center justify-center" style="background-color: #273CC6;">
-      <div class="flex flex-col items-center gap-4">
-        <img src="/logo-white.svg" alt="" class="w-16 h-16"  />
-        <div class="w-32 h-0.5 rounded-full overflow-hidden" style="background-color: rgba(255,255,255,0.2);">
-          <div id="loader-bar" class="h-full rounded-full" style="background-color: #C98B27; width: 0%; transition: width 0.3s ease;"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- ── Page transition overlay ── -->
-    <div id="transition-overlay" class="fixed inset-0 z-[9998] pointer-events-none flex items-center justify-center" style="background-color: #273CC6; opacity: 0;">
-      <img src="/logo-white.svg" alt="" class="w-12 h-12" style="filter: brightness(0) invert(1); opacity: 0;" id="transition-logo" />
-    </div>
 
     <div class="page-content">
       <Header locale={locale} />
@@ -168,170 +148,32 @@ const jsonLd = {
     </div>
 
     <script>
-      import { gsap } from 'gsap';
-      import { ScrollTrigger } from 'gsap/ScrollTrigger';
       import Lenis from 'lenis';
 
-      gsap.registerPlugin(ScrollTrigger);
-
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)');
       let currentLenis: InstanceType<typeof Lenis> | null = null;
 
-      function initLenis() {
-        if (currentLenis) currentLenis.destroy();
+      function stopSmoothScroll() {
+        currentLenis?.destroy();
+        currentLenis = null;
+      }
+
+      // Progressive enhancement only: neither visibility nor navigation depends
+      // on this script, session storage, a timer or an animation completing.
+      function initSmoothScroll() {
+        stopSmoothScroll();
+        if (reducedMotion.matches) return;
         currentLenis = new Lenis({
+          autoRaf: true,
           duration: 1.2,
           easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
         });
-        currentLenis.on('scroll', ScrollTrigger.update);
-        gsap.ticker.add((time) => currentLenis?.raf(time * 1000));
-        gsap.ticker.lagSmoothing(0);
       }
 
-      // ── Initial page loader (first visit only, max 800ms) ──
-      function runLoader() {
-        const loader = document.getElementById('page-loader');
-        const bar = document.getElementById('loader-bar');
-        const content = document.querySelector('.page-content');
-        if (!loader || !bar || !content) return;
-
-        // Skip loader on return visits
-        if (sessionStorage.getItem('sk-visited')) {
-          loader.style.display = 'none';
-          content.classList.add('loaded');
-          document.dispatchEvent(new Event('loader-done'));
-          return;
-        }
-        sessionStorage.setItem('sk-visited', '1');
-
-        const MIN_DURATION = 800;
-        const startTime = Date.now();
-
-        const interval = setInterval(() => {
-          const elapsed = Date.now() - startTime;
-          const progress = Math.min(90, (elapsed / MIN_DURATION) * 100);
-          bar.style.width = progress + '%';
-
-          if (elapsed >= MIN_DURATION) {
-            clearInterval(interval);
-            bar.style.width = '100%';
-            setTimeout(() => {
-              gsap.to(loader, {
-                opacity: 0,
-                duration: 0.4,
-                ease: 'power2.inOut',
-                onComplete: () => {
-                  loader.style.display = 'none';
-                  content.classList.add('loaded');
-                  document.dispatchEvent(new Event('loader-done'));
-                },
-              });
-            }, 200);
-          }
-        }, 30);
-      }
-
-      // ── Page transition (on navigation) ──
-      function playTransitionOut() {
-        const overlay = document.getElementById('transition-overlay');
-        const logo = document.getElementById('transition-logo');
-        if (!overlay || !logo) return;
-
-        overlay.style.pointerEvents = 'all';
-        const tl = gsap.timeline();
-        tl.to(overlay, { opacity: 1, duration: 0.35, ease: 'power2.in' });
-        tl.to(logo, { opacity: 1, scale: 1, duration: 0.2, ease: 'power2.out' }, '-=0.1');
-      }
-
-      function playTransitionIn() {
-        const overlay = document.getElementById('transition-overlay');
-        const logo = document.getElementById('transition-logo');
-        const content = document.querySelector('.page-content');
-        if (!overlay || !logo) return;
-
-        content?.classList.add('loaded');
-
-        const tl = gsap.timeline();
-        tl.to(logo, { opacity: 0, duration: 0.15, ease: 'power2.in' });
-        tl.to(overlay, {
-          opacity: 0,
-          duration: 0.4,
-          ease: 'power2.out',
-          onComplete: () => {
-            overlay.style.pointerEvents = 'none';
-          },
-        });
-      }
-
-      // ── Hero animation ──
-      function animateHero(animate = true) {
-        const heroElements = document.querySelectorAll('.hero-animated');
-        if (heroElements.length === 0) return;
-
-        // Kill any previous GSAP on these elements
-        gsap.killTweensOf('.hero-eyebrow, .hero-line, .hero-sub, .hero-actions');
-
-        // Make visible
-        heroElements.forEach((el) => {
-          (el as HTMLElement).style.visibility = 'visible';
-        });
-
-        if (!animate) return; // Just show, no animation
-
-        const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
-        tl.from('.hero-eyebrow', { opacity: 0, x: -20, duration: 0.8 }, 0);
-        tl.from('.hero-line', { yPercent: 110, duration: 1.1, stagger: 0.1 }, 0.1);
-        tl.from('.hero-sub', { opacity: 0, y: 20, duration: 0.8 }, 0.7);
-        tl.from('.hero-actions', { opacity: 0, y: 20, duration: 0.8 }, 0.9);
-      }
-
-      // ── Lifecycle ──
-      let isFirstLoad = true;
-
-      // First load: run loader, then hero
-      initLenis();
-
-      const hasVisited = sessionStorage.getItem('sk-visited');
-      runLoader();
-
-      if (hasVisited) {
-        // Return visit: no loader, show hero immediately
-        animateHero(false);
-      } else {
-        // First visit: animate hero after loader
-        document.addEventListener('loader-done', () => {
-          animateHero(true);
-        }, { once: true });
-      }
-
-      // Before navigation (transition out)
-      document.addEventListener('astro:before-preparation', () => {
-        playTransitionOut();
-      });
-
-      // After swap (new page content is in DOM)
-      document.addEventListener('astro:after-swap', () => {
-        window.scrollTo(0, 0);
-        initLenis();
-      });
-
-      // After transition completes (every navigation including first)
-      document.addEventListener('astro:page-load', () => {
-        if (isFirstLoad) {
-          isFirstLoad = false;
-          return; // First load handled by loader-done
-        }
-
-        // Subsequent navigations
-        const loader = document.getElementById('page-loader');
-        if (loader) loader.style.display = 'none';
-
-        const content = document.querySelector('.page-content');
-        content?.classList.add('loaded');
-
-        // Show hero immediately (no delay), animate transition overlay on top
-        animateHero(false);
-        playTransitionIn();
-      });
+      initSmoothScroll();
+      document.addEventListener('astro:before-swap', stopSmoothScroll);
+      document.addEventListener('astro:page-load', initSmoothScroll);
+      reducedMotion.addEventListener('change', initSmoothScroll);
     </script>
   </body>
 </html>

@@ -19,10 +19,12 @@ interface FooterLink {
 }
 
 const serviceLinks: FooterLink[] = [
-  { href: localePath('/services#social-media', locale), label: { fr: 'Réseaux sociaux', eu: 'Sare sozialak' } },
-  { href: localePath('/services#sites-web', locale), label: { fr: 'Sites Web & E-commerce', eu: 'Webguneak eta e-merkataritza' } },
-  { href: localePath('/services#identite-visuelle', locale), label: { fr: 'Identité visuelle & Print', eu: 'Nortasun bisuala' } },
-  { href: localePath('/services#marketing-digital', locale), label: { fr: 'Marketing digital', eu: 'Marketing digitala' } },
+  { href: localePath('/services/social-media', locale), label: { fr: 'Réseaux sociaux', eu: 'Sare sozialak' } },
+  { href: localePath('/services/sites-web', locale), label: { fr: 'Sites Web & E-commerce', eu: 'Webguneak eta e-merkataritza' } },
+  { href: localePath('/services/identite-visuelle', locale), label: { fr: 'Identité visuelle', eu: 'Nortasun bisuala' } },
+  { href: localePath('/services/marketing-digital', locale), label: { fr: 'Marketing digital', eu: 'Marketing digitala' } },
+  { href: localePath('/services/editions-imprimees', locale), label: { fr: 'Éditions imprimées', eu: 'Inprimatutako edizioak' } },
+  { href: localePath('/services/evenementiel', locale), label: { fr: 'Événementiel', eu: 'Gertaeren komunikazioa' } },
 ];
 
 const studioLinks: FooterLink[] = [

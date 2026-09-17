@@ -1,7 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import ResponsiveImage from '../sections/ResponsiveImage.astro';
 import CtaSection from '../sections/CtaSection.astro';
 import { siteConfig } from '../../data/site';
+import { aboutEditorial } from '../../data/seo';
+import EditorialSections from '../sections/EditorialSections.astro';
 import { type Locale } from '../../i18n/config';
 import { localize, t } from '../../i18n/utils';
 
@@ -10,6 +13,7 @@ interface Props {
 }
 
 const { locale } = Astro.props;
+const editorial = locale === 'fr' ? aboutEditorial : undefined;
 
 const promises = [
   t('about.promise.1', locale),
@@ -32,16 +36,16 @@ const values = [
 ];
 ---
 
-<Layout title={t('meta.about.title', locale)} description={t('meta.about.description', locale)} locale={locale}>
+<Layout title={editorial?.seoTitle ?? t('meta.about.title', locale)} description={editorial?.seoDescription ?? t('meta.about.description', locale)} locale={locale}>
   <!-- Hero -->
   <section class="pt-32 pb-20 px-6 bg-pink/30">
     <div class="max-w-4xl mx-auto">
       <span class="text-xs font-medium uppercase tracking-[0.2em] text-ink-faint mb-4 block">{t('about.eyebrow', locale)}</span>
       <h1 class="font-display text-4xl md:text-5xl font-extrabold tracking-tight text-ink leading-tight mb-6">
-        Maider Gaicotchea
+        {editorial?.h1 ?? 'Maider Gaicotchea'}
       </h1>
       <p class="text-xl text-ink-muted leading-relaxed max-w-2xl">
-        {t('about.hero.intro', locale)} <strong class="text-ink">{siteConfig.experience} {t('about.hero.experience', locale)}</strong> {t('about.hero.experienceRest', locale)}
+        {editorial ? editorial.intro : <>{t('about.hero.intro', locale)} <strong class="text-ink">{siteConfig.experience} {t('about.hero.experience', locale)}</strong> {t('about.hero.experienceRest', locale)}</>}
       </p>
     </div>
   </section>
@@ -53,7 +57,7 @@ const values = [
         <blockquote class="text-xl font-display font-bold text-ink leading-snug mb-8 border-l-2 border-gold pl-5">
           {localize(siteConfig.tagline, locale)}
         </blockquote>
-        <div class="flex flex-col gap-5 text-ink-muted leading-relaxed">
+        {editorial ? <EditorialSections sections={editorial.sections} /> : <div class="flex flex-col gap-5 text-ink-muted leading-relaxed">
           <p>
             {t('about.story.p1.pre', locale)} <strong class="text-ink">{t('about.story.p1.strong1', locale)}</strong> {t('about.story.p1.mid', locale)} <strong class="text-ink">{t('about.story.p1.strong2', locale)}</strong>{t('about.story.p1.post', locale)}
           </p>
@@ -63,7 +67,7 @@ const values = [
           <p>
             {t('about.story.p3', locale)}
           </p>
-        </div>
+        </div>}
 
         <div class="mt-8 grid grid-cols-1 sm:grid-cols-2 gap-3">
           {promises.map((promise) => (
@@ -75,7 +79,7 @@ const values = [
         </div>
       </div>
       <div class="rounded-2xl overflow-hidden aspect-[3/4]">
-        <img src="/maider.jpg" alt={t('common.maiderAlt', locale)} width="600" height="800" class="w-full h-full object-cover" loading="lazy" decoding="async" />
+        <ResponsiveImage sizes="(min-width: 1024px) 360px, (min-width: 640px) 600px, calc(100vw - 48px)" src="/maider.jpg" alt={t('common.maiderAlt', locale)} width="600" height="800" class="w-full h-full object-cover" loading="lazy" decoding="async" />
       </div>
     </div>
   </section>
@@ -117,7 +121,7 @@ const values = [
   <script type="application/ld+json" set:html={JSON.stringify({
     "@context": "https://schema.org", "@type": "Person",
     "name": "Maider Gaicotchea", "jobTitle": localize(siteConfig.founderTitle, locale),
-    "worksFor": { "@type": "Organization", "name": "Studio Kutzu" },
+    "worksFor": { "@id": "https://studiokutzu.com/#business" },
     "address": { "@type": "PostalAddress", "addressLocality": "Cambo-les-Bains", "postalCode": "64250", "addressCountry": "FR" },
   })} />
 </Layout>

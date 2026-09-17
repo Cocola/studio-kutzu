@@ -1,0 +1,63 @@
+{
+  "method": "Lighthouse mobile local; même version et réglages; profil isolé, cache vide, simulation mobile par défaut; une mesure par page et version.",
+  "scope": "Mesures locales, aucun Core Web Vital terrain ni résultat de production confirmé.",
+  "pages": [
+    {
+      "page": "home",
+      "before": {
+        "lighthouseVersion": "13.0.3",
+        "fetchTime": "2026-09-17T07:25:23.041Z",
+        "performanceScore": 94,
+        "lcpMs": 2635,
+        "cls": 0,
+        "transferBytes": 1364510
+      },
+      "after": {
+        "lighthouseVersion": "13.0.3",
+        "fetchTime": "2026-09-17T07:30:08.686Z",
+        "performanceScore": 99,
+        "lcpMs": 1966,
+        "cls": 5.700396246610418e-06,
+        "transferBytes": 244743
+      }
+    },
+    {
+      "page": "service",
+      "before": {
+        "lighthouseVersion": "13.0.3",
+        "fetchTime": "2026-09-17T07:26:06.712Z",
+        "performanceScore": 97,
+        "lcpMs": 2336,
+        "cls": 0,
+        "transferBytes": 742376
+      },
+      "after": {
+        "lighthouseVersion": "13.0.3",
+        "fetchTime": "2026-09-17T07:31:29.248Z",
+        "performanceScore": 99,
+        "lcpMs": 1958,
+        "cls": 2.632771411211488e-05,
+        "transferBytes": 234689
+      }
+    },
+    {
+      "page": "project",
+      "before": {
+        "lighthouseVersion": "13.0.3",
+        "fetchTime": "2026-09-17T07:26:57.141Z",
+        "performanceScore": 83,
+        "lcpMs": 4356,
+        "cls": 0,
+        "transferBytes": 820524
+      },
+      "after": {
+        "lighthouseVersion": "13.0.3",
+        "fetchTime": "2026-09-17T07:32:04.093Z",
+        "performanceScore": 98,
+        "lcpMs": 2341,
+        "cls": 0.0001300649816862744,
+        "transferBytes": 280912
+      }
+    }
+  ]
+}

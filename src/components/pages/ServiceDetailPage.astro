@@ -1,7 +1,10 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import ResponsiveImage from '../sections/ResponsiveImage.astro';
 import CtaSection from '../sections/CtaSection.astro';
-import { services, portfolio, type Service } from '../../data/site';
+import { services, portfolio, type Service, type ServiceTag } from '../../data/site';
+import { serviceEditorial } from '../../data/seo';
+import EditorialSections from '../sections/EditorialSections.astro';
 import { type Locale } from '../../i18n/config';
 import { localePath, localize, t } from '../../i18n/utils';
 
@@ -12,17 +15,18 @@ interface Props {
 
 const { locale, service } = Astro.props;
 
-const relatedProjects = portfolio.filter(p => p.serviceTags.includes(service.slug as any));
+const relatedProjects = portfolio.filter(p => p.serviceTags.includes(service.slug as ServiceTag));
 const otherServices = services.filter(s => s.slug !== service.slug);
 
 const serviceName = localize(service.name, locale);
 const serviceDescription = localize(service.description, locale);
 const serviceFeatures = localize(service.features, locale);
+const editorial = locale === 'fr' ? serviceEditorial[service.slug as ServiceTag] : undefined;
 ---
 
 <Layout
-  title={`${serviceName} ${t('meta.serviceDetail.suffix', locale)}`}
-  description={serviceDescription}
+  title={editorial?.seoTitle ?? `${serviceName} ${t('meta.serviceDetail.suffix', locale)}`}
+  description={editorial?.seoDescription ?? serviceDescription}
   locale={locale}
 >
   <!-- Back link -->
@@ -44,10 +48,10 @@ const serviceFeatures = localize(service.features, locale);
         </div>
         <div>
           <h1 class="font-display text-3xl md:text-4xl font-extrabold tracking-tight text-ink mb-3">
-            {serviceName}
+            {editorial?.h1 ?? serviceName}
           </h1>
           <p class="text-ink-muted text-lg leading-relaxed max-w-2xl">
-            {serviceDescription}
+            {editorial?.intro ?? serviceDescription}
           </p>
         </div>
       </div>
@@ -70,6 +74,14 @@ const serviceFeatures = localize(service.features, locale);
     </div>
   </section>
 
+  {editorial && (
+    <section class="pb-16 px-6">
+      <div class="max-w-5xl mx-auto">
+        <div class="max-w-3xl"><EditorialSections sections={editorial.sections} /></div>
+      </div>
+    </section>
+  )}
+
   <!-- Related projects -->
   {relatedProjects.length > 0 && (
     <section class="py-16 px-6 bg-surface-alt">
@@ -83,7 +95,7 @@ const serviceFeatures = localize(service.features, locale);
             return (
               <a href={localePath(`/realisations/${project.slug}`, locale)} class="group block rounded-2xl overflow-hidden bg-surface border border-border transition-all duration-300 hover:shadow-xl hover:shadow-ink/8 hover:-translate-y-1 hover:border-border-strong">
                 <div class="aspect-[4/3] overflow-hidden">
-                  <img
+                  <ResponsiveImage sizes="(min-width: 1024px) 325px, (min-width: 768px) calc((100vw - 72px) / 2), calc(100vw - 48px)"
                     src={project.image.desktop}
                     alt={`${project.client} — ${projServices.join(', ')}`}
                     class="w-full h-full object-cover object-center transition-transform duration-500 group-hover:scale-[1.05]"
@@ -113,7 +125,7 @@ const serviceFeatures = localize(service.features, locale);
     <div class="max-w-5xl mx-auto">
       <h2 class="font-display text-2xl font-extrabold text-ink mb-8">{t('serviceDetail.other', locale)}</h2>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {otherServices.slice(0, 3).map((other) => (
+        {otherServices.map((other) => (
           <a href={localePath(`/services/${other.slug}`, locale)} class="group flex items-start gap-4 p-5 rounded-xl bg-surface border border-border transition-all duration-300 hover:shadow-md hover:-translate-y-0.5">
             <div class={`w-10 h-10 ${other.iconContainer} flex items-center justify-center flex-shrink-0 ${other.iconColor}`}>
               <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" set:html={other.icon} />
@@ -135,16 +147,10 @@ const serviceFeatures = localize(service.features, locale);
     "@context": "https://schema.org",
     "@type": "Service",
     "name": serviceName,
-    "description": serviceDescription,
+    "description": editorial?.seoDescription ?? serviceDescription,
+    "url": new URL(localePath(`/services/${service.slug}`, locale), Astro.site).toString(),
     "provider": {
-      "@type": "LocalBusiness",
-      "name": "Studio Kutzu",
-      "address": {
-        "@type": "PostalAddress",
-        "addressLocality": "Cambo-les-Bains",
-        "postalCode": "64250",
-        "addressCountry": "FR",
-      },
+      "@id": "https://studiokutzu.com/#business",
     },
     "areaServed": "Pays Basque",
   })} />

@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/Layout.astro';
+import ResponsiveImage from '../sections/ResponsiveImage.astro';
 import HeroSection from '../sections/HeroSection.astro';
 import CtaSection from '../sections/CtaSection.astro';
 import { services, portfolio, siteConfig } from '../../data/site';
@@ -32,7 +33,7 @@ const { locale } = Astro.props;
 
         <div class="flex flex-col divide-y divide-border">
           {services.map((service) => (
-            <a href={`${localePath('/services', locale)}#${service.slug}`} class="group flex items-start gap-5 py-7 first:pt-0 last:pb-0 transition-colors duration-300">
+            <a href={localePath(`/services/${service.slug}`, locale)} class="group flex items-start gap-5 py-7 first:pt-0 last:pb-0 transition-colors duration-300">
               <div class={`w-11 h-11 ${service.iconContainer} flex items-center justify-center flex-shrink-0 mt-0.5 ${service.iconColor} group-hover:scale-110 transition-all duration-300`}>
                 <svg class="w-5 h-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" set:html={service.icon} />
               </div>
@@ -72,7 +73,7 @@ const { locale } = Astro.props;
           return (
             <a href={localePath(`/realisations/${project.slug}`, locale)} class="group block rounded-2xl overflow-hidden bg-surface border border-border transition-all duration-300 hover:shadow-xl hover:shadow-ink/8 hover:-translate-y-1 hover:border-border-strong">
               <div class="aspect-[4/3] overflow-hidden">
-                <img
+                <ResponsiveImage sizes="(min-width: 1024px) 368px, (min-width: 640px) calc((100vw - 68px) / 2), calc(100vw - 48px)"
                   src={project.image.desktop}
                   alt={`${project.client} — ${services.join(', ')}`}
                   width="640"
@@ -121,7 +122,7 @@ const { locale } = Astro.props;
 
       <div>
         <div class="aspect-[4/5] rounded-2xl overflow-hidden">
-          <img src="/maider.jpg" alt={t('common.maiderAlt', locale)} width="640" height="800" class="w-full h-full object-cover" loading="lazy" decoding="async" />
+          <ResponsiveImage sizes="(min-width: 1200px) 495px, (min-width: 1024px) 42vw, calc(100vw - 48px)" src="/maider.jpg" alt={t('common.maiderAlt', locale)} width="640" height="800" class="w-full h-full object-cover" loading="lazy" decoding="async" />
         </div>
       </div>
     </div>

@@ -6,6 +6,7 @@ import tailwindcss from '@tailwindcss/vite';
 // https://astro.build/config
 export default defineConfig({
   site: 'https://studiokutzu.com',
+  trailingSlash: 'always',
   integrations: [react()],
   vite: {
     plugins: [tailwindcss()],

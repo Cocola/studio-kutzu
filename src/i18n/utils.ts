@@ -41,16 +41,21 @@ export function stripLocale(pathname: string): string {
  * Default locale = no prefix; other locales prefixed.
  */
 export function localePath(path: string, locale: Locale): string {
-  const canonical = stripLocale(path);
-  if (locale === DEFAULT_LOCALE) return canonical;
-  if (canonical === '/') return `/${locale}`;
-  return `/${locale}${canonical}`;
+  // Keep query strings and anchors outside the path normalization.
+  const suffixIndex = path.search(/[?#]/);
+  const pathname = suffixIndex === -1 ? path : path.slice(0, suffixIndex);
+  const suffix = suffixIndex === -1 ? '' : path.slice(suffixIndex);
+  const canonical = stripLocale(pathname).replace(/\/+$/, '') || '/';
+  const localized = locale === DEFAULT_LOCALE
+    ? canonical
+    : `/${locale}${canonical === '/' ? '' : canonical}`;
+  return `${localized === '/' ? '/' : `${localized}/`}${suffix}`;
 }
 
 /**
  * Helper: compute the equivalent URL on another locale, preserving the
- * current page (used by the language switcher). Strips trailing slash from
- * non-root paths to avoid double slashes.
+ * current page (used by the language switcher), using the same trailing
+ * slash convention as canonical URLs and the sitemap.
  */
 export function alternateUrl(currentPath: string, targetLocale: Locale): string {
   return localePath(currentPath, targetLocale);

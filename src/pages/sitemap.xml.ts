@@ -1,32 +1,26 @@
 import type { APIRoute } from 'astro';
 import { LOCALES, DEFAULT_LOCALE, HTML_LANG } from '../i18n/config';
 import { localePath } from '../i18n/utils';
+import { portfolio, services } from '../data/site';
 
 const pages = [
-  { path: '/', priority: 1.0, changefreq: 'weekly' },
-  { path: '/services', priority: 0.9, changefreq: 'monthly' },
-  { path: '/realisations', priority: 0.9, changefreq: 'weekly' },
-  { path: '/a-propos', priority: 0.7, changefreq: 'monthly' },
-  { path: '/contact', priority: 0.8, changefreq: 'monthly' },
+  '/', '/services', '/realisations', '/a-propos', '/contact',
+  ...services.map((service) => `/services/${service.slug}`),
+  ...portfolio.map((project) => `/realisations/${project.slug}`),
 ];
 
 const site = 'https://studiokutzu.com';
 
 export const GET: APIRoute = () => {
-  const today = new Date().toISOString().split('T')[0];
-
   const urlEntries = pages.flatMap((page) =>
     LOCALES.map((loc) => {
-      const localizedUrl = `${site}${localePath(page.path, loc)}`;
+      const localizedUrl = `${site}${localePath(page, loc)}`;
       const alternates = LOCALES.map(
-        (alt) => `      <xhtml:link rel="alternate" hreflang="${HTML_LANG[alt]}" href="${site}${localePath(page.path, alt)}" />`
+        (alt) => `      <xhtml:link rel="alternate" hreflang="${HTML_LANG[alt]}" href="${site}${localePath(page, alt)}" />`
       ).join('\n');
-      const xDefault = `      <xhtml:link rel="alternate" hreflang="x-default" href="${site}${localePath(page.path, DEFAULT_LOCALE)}" />`;
+      const xDefault = `      <xhtml:link rel="alternate" hreflang="x-default" href="${site}${localePath(page, DEFAULT_LOCALE)}" />`;
       return `  <url>
     <loc>${localizedUrl}</loc>
-    <lastmod>${today}</lastmod>
-    <changefreq>${page.changefreq}</changefreq>
-    <priority>${page.priority}</priority>
 ${alternates}
 ${xDefault}
   </url>`;
