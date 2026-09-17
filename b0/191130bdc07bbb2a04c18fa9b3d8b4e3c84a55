@@ -1,0 +1,98 @@
+astro.config.mjs
+  s_9d9b34e760f606::t_fe3f40ba73d961 9,21
+src/pages/sitemap.xml.ts
+  s_9d9b34e760f606::t_fe3f40ba73d961 4,7-9,17,19,21
+src/components/layout/Footer.astro
+  s_9d9b34e760f606::t_fe3f40ba73d961 22-25
+  s_9d9b34e760f606::t_13729447077eee 26-27
+src/components/pages/ServiceDetailPage.astro
+  s_9d9b34e760f606::t_f6cf219fad4208 6
+  s_9d9b34e760f606::t_c7ba38eb61f1f2 3,98
+  s_9d9b34e760f606::t_7e9844e268c95b 5,7,18,24,28-29,51,54,77-84,128,150-151,153
+src/layouts/Layout.astro
+  s_9d9b34e760f606::t_bea581c9485a16 21,39,91,153,156-165,167,173-176
+docs/seo-rollout.md
+  s_9d9b34e760f606::t_f9dcb5f1534335 1-63,67-77
+  s_9d9b34e760f606::t_7e3a1f46b6bf76 64-66
+package.json
+  s_9d9b34e760f606::t_b89ac0ec525fe5 13-14
+  s_9d9b34e760f606::t_19e46fcfb75c08 12,29
+src/components/sections/EditorialSections.astro
+  s_9d9b34e760f606::t_f6cf219fad4208 2
+  s_9d9b34e760f606::t_7e9844e268c95b 1,3-25
+docs/seo-performance.json
+  s_9d9b34e760f606::t_e4886d5300c009 1-63
+src/components/layout/Header.astro
+  s_9d9b34e760f606::t_13729447077eee 246
+  s_9d9b34e760f606::t_8e15c71e7ac374 94,100-105,113,208,224,230
+  s_9d9b34e760f606::t_e639fe8507e846 95-99
+src/i18n/utils.ts
+  s_9d9b34e760f606::t_fe3f40ba73d961 44-52,57-58
+src/components/pages/HomePage.astro
+  s_9d9b34e760f606::t_7e9844e268c95b 36
+  s_9d9b34e760f606::t_204a001b4e2ece 125
+  s_9d9b34e760f606::t_c7ba38eb61f1f2 3,76
+src/styles/global.css
+  s_9d9b34e760f606::t_fe3f40ba73d961 121-124,128,130
+src/components/sections/ResponsiveImage.astro
+  s_9d9b34e760f606::t_91cc2f035badd4 1-28
+scripts/verify-seo.mjs
+  s_9d9b34e760f606::t_474f8333a2021d 1-177,184-211
+  s_9d9b34e760f606::t_7b0f3d9b384294 178-183
+src/components/pages/ContactPage.astro
+  s_9d9b34e760f606::t_a0b4392f36a6af 108-115
+  s_9d9b34e760f606::t_91cc2f035badd4 233-234
+src/components/pages/PortfolioDetailPage.astro
+  s_9d9b34e760f606::t_f6cf219fad4208 6
+  s_9d9b34e760f606::t_7e9844e268c95b 5,7,25-26,30-31,65,68,77-85
+  s_9d9b34e760f606::t_c7ba38eb61f1f2 3,48,53
+  s_9d9b34e760f606::t_204a001b4e2ece 146
+  s_9d9b34e760f606::t_792da084d4a4f7 86-87
+src/components/pages/AboutPage.astro
+  s_9d9b34e760f606::t_c7ba38eb61f1f2 3,82
+  s_9d9b34e760f606::t_f6cf219fad4208 6
+  s_9d9b34e760f606::t_0c9b793787ca26 7,16,39,45,48,60,70,124
+vercel.json
+  s_9d9b34e760f606::t_8e15c71e7ac374 1-12
+src/data/site.ts
+  s_9d9b34e760f606::t_e564dc7df692e6 93,104
+  s_9d9b34e760f606::t_141d73ec1e8166 291
+src/data/seo.ts
+  s_9d9b34e760f606::t_701810e280cecf 1-54,56-134,136-255,257-323
+  s_9d9b34e760f606::t_03e6af530f7a6e 55,256
+  s_9d9b34e760f606::t_f9dcb5f1534335 135
+docs/seo-leads.csv
+  s_9d9b34e760f606::t_f9dcb5f1534335 1
+src/components/pages/PortfolioListPage.astro
+  s_9d9b34e760f606::t_c7ba38eb61f1f2 3
+  s_9d9b34e760f606::t_204a001b4e2ece 42,79
+docs/seo-editorial-sources.md
+  s_9d9b34e760f606::t_f9dcb5f1534335 1-4,7-48
+  s_9d9b34e760f606::t_e564dc7df692e6 5-6
+docs/seo-validation.md
+  s_9d9b34e760f606::t_80d5672a2f0432 1-30,33-67
+  s_9d9b34e760f606::t_1ee80432b949c1 31-32
+scripts/test-seo-browser.mjs
+  s_9d9b34e760f606::t_b0e174af030eff 151-158
+  s_9d9b34e760f606::t_9b82727d18178c 75-76,78,95,167
+  s_9d9b34e760f606::t_e639fe8507e846 41,62-74,77,79-81,108,121,125,254,257-270
+  s_9d9b34e760f606::t_ce68b406f42b2f 1-40,42-61,82-94,96-107,109-120,122-124,126-150,159-166,168-253,255-256,271-282
+package-lock.json
+  s_9d9b34e760f606::t_55f22b608a76db 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "b0191130bdc07bbb2a04c18fa9b3d8b4e3c84a55",
+  "prompts": {},
+  "sessions": {
+    "s_9d9b34e760f606": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0aa49-0f24-7912-821a-38131eac5b20",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Nicolas Fiascaro <n.fiascaro@gmail.com>"
+    }
+  }
+}
