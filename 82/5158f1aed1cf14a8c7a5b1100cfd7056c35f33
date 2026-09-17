@@ -1,0 +1,23 @@
+scripts/test-vercel-redirects.mjs
+  s_9d9b34e760f606::t_8d20a81ca5a321 1-54
+vercel.json
+  s_9d9b34e760f606::t_e58b3cf0b2d4ad 6,8
+docs/seo-validation.md
+  s_9d9b34e760f606::t_8d20a81ca5a321 68-80
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.4",
+  "base_commit_sha": "825158f1aed1cf14a8c7a5b1100cfd7056c35f33",
+  "prompts": {},
+  "sessions": {
+    "s_9d9b34e760f606": {
+      "agent_id": {
+        "tool": "codex",
+        "id": "01a0aa49-0f24-7912-821a-38131eac5b20",
+        "model": "gpt-6-astra"
+      },
+      "human_author": "Nicolas Fiascaro <n.fiascaro@gmail.com>"
+    }
+  }
+}
